@@ -254,6 +254,20 @@ export default function FundraisingCampaign({ goToPage }: Props) {
     finally { setSubmitting(false); }
   }, [selectedAmount, customAmount, donorEmail, donorName, isAnonymous, paymentMethod, cryptoCoin, selectedPerk, isRecurring, recurringFreq, donorMessage]);
 
+  /* ─── Impact text helper ─── */
+  const getImpactText = (amount: number) => {
+    if (amount >= 25_000_000) return 'Name a Central Node — Venice, San Francisco, or Singapore. The apex of the Artemis network, bearing your name in perpetuity.';
+    if (amount >= 10_000_000) return 'Name a Tier A College or Center of Inquiry. Your name permanently associated with a flagship institution.';
+    if (amount >= 5_000_000) return "Name a Tier B College or Distinguished Professorship. A permanent endowment in your name.";
+    if (amount >= 2_000_000) return 'Name a Tier C College. Your name becomes home to the next generation of leaders.';
+    if (amount >= 1_000_000) return "Name a Professorship or major program. A lasting academic legacy.";
+    if (amount >= 100_000) return "Named scholarship fund or tutorial room at your chosen College.";
+    if (amount >= 12_000) return "Fund a student's full scholarship for four years. The most direct way to change a life.";
+    if (amount >= 10_000) return 'Your name in the founding Donor Roll — a permanent record of the founders.';
+    if (amount >= 99) return 'Waitlist priority for enrollment. You were first in line.';
+    return 'Every contribution counts in the founding of a university.';
+  };
+
   return (
     <div className="flex flex-col bg-white">
 
@@ -282,7 +296,7 @@ export default function FundraisingCampaign({ goToPage }: Props) {
                   The Founding Campaign for the University of Artemis. $100M. 12 months. The kickstart that makes everything else self-sustaining.
                 </p>
                 <p className="text-[13px] sm:text-[15px] text-[#8A0000]/90 font-bold uppercase tracking-[0.15em] mb-6 sm:mb-8">
-                  $100M. 12 months. The zero-to-one moment for civilization.
+                  $100M. 4 phases to launch. The zero-to-one moment for civilization.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <button onClick={() => document.getElementById('give')?.scrollIntoView({ behavior: 'smooth' })} className="flex items-center space-x-3 px-8 py-4 bg-[#8A0000] text-white text-[12px] font-bold uppercase tracking-[0.25em] hover:bg-[#6B0000] transition-colors group">
@@ -316,7 +330,7 @@ export default function FundraisingCampaign({ goToPage }: Props) {
       />
 
       {/* ══════════════════════════════════════════
-          CAMPAIGN PROGRESS — Pillar Constellation Map
+          CAMPAIGN PROGRESS — Horizontal Segmented Bar
           ══════════════════════════════════════════ */}
       <section className="bg-white py-12 sm:py-20 lg:py-28 border-b border-gray-100">
         <div className="max-w-[1400px] mx-auto w-full px-5 sm:px-8 lg:px-20">
@@ -329,73 +343,73 @@ export default function FundraisingCampaign({ goToPage }: Props) {
             </div>
           </div>
 
-          {/* Horizontal Pillar Constellation Map */}
-          <div className="relative mb-12 sm:mb-16">
-            {/* Background connecting line */}
-            <div className="absolute top-[28px] left-0 right-0 h-[2px] bg-gray-100 hidden sm:block" />
-            <motion.div
-              className="absolute top-[28px] left-0 h-[2px] bg-[#8A0000]/30 hidden sm:block"
-              initial={{ width: 0 }}
-              whileInView={{ width: `${pct}%` }}
-              transition={{ duration: 2, ease: 'easeOut' }}
-              viewport={{ once: true }}
-            />
-
-            {/* Five Pillar Nodes */}
-            <div className="flex justify-between items-start gap-2 sm:gap-4">
+          {/* Horizontal Segmented Bar Visualization */}
+          <div className="mb-10 sm:mb-14">
+            {/* Main segmented bar */}
+            <div className="h-12 sm:h-16 w-full flex overflow-hidden bg-gray-100 relative">
               {FIVE_PILLARS.map((p, i) => {
-                const Icon = p.icon;
-                const cumulativePct = FIVE_PILLARS.slice(0, i + 1).reduce((sum, pillar) => sum + pillar.pct, 0);
-                const isFilled = pct >= (cumulativePct - p.pct);
-                const isPartiallyFilled = !isFilled && pct > (cumulativePct - p.pct);
+                const isFilled = pct >= FIVE_PILLARS.slice(0, i + 1).reduce((sum, pillar) => sum + pillar.pct, 0) - p.pct;
+                const partialPct = (() => {
+                  const cumulativeBefore = FIVE_PILLARS.slice(0, i).reduce((sum, pillar) => sum + pillar.pct, 0);
+                  if (pct >= cumulativeBefore + p.pct) return 1;
+                  if (pct <= cumulativeBefore) return 0;
+                  return (pct - cumulativeBefore) / p.pct;
+                })();
                 return (
                   <motion.div
                     key={p.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: i * 0.12 }}
+                    initial={{ width: 0 }}
+                    whileInView={{ width: `${p.pct}%` }}
+                    transition={{ duration: 1.2, delay: i * 0.15, ease: 'easeOut' }}
                     viewport={{ once: true }}
-                    className="flex flex-col items-center text-center flex-1"
+                    className="relative h-full flex items-center justify-center overflow-hidden group cursor-default"
+                    style={{ backgroundColor: isFilled ? '#8A0000' : partialPct > 0 ? `rgba(138, 0, 0, ${0.15 + partialPct * 0.85})` : '#f3f4f6' }}
                   >
-                    {/* Node circle */}
-                    <div className={`relative w-14 h-14 sm:w-[56px] sm:h-[56px] rounded-full border-2 flex items-center justify-center z-10 transition-all duration-700 ${isFilled ? 'bg-[#8A0000] border-[#8A0000]' : isPartiallyFilled ? 'bg-[#8A0000]/10 border-[#8A0000]' : 'bg-white border-gray-200'}`}>
-                      <Icon size={20} className={isFilled ? 'text-white' : isPartiallyFilled ? 'text-[#8A0000]' : 'text-gray-300'} />
-                      {/* Pulse ring for active node */}
-                      {isPartiallyFilled && (
-                        <motion.div
-                          className="absolute inset-0 rounded-full border-2 border-[#8A0000]/30"
-                          animate={{ scale: [1, 1.2, 1], opacity: [0.6, 0, 0.6] }}
-                          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-                        />
-                      )}
-                    </div>
-                    {/* Label */}
-                    <div className="mt-3 sm:mt-4">
-                      <div className={`text-[11px] sm:text-[13px] font-black uppercase tracking-widest ${isFilled ? 'text-[#8A0000]' : 'text-gray-400'}`}>{p.title}</div>
-                      <div className="text-[18px] sm:text-[24px] font-black text-[#141414] leading-none mt-1">{p.pct}%</div>
-                      <div className="text-[10px] sm:text-[11px] text-gray-400 mt-0.5">{sym}{fmtShort(p.goal)}</div>
-                    </div>
+                    {/* Partial fill overlay */}
+                    {!isFilled && partialPct > 0 && (
+                      <motion.div
+                        className="absolute inset-y-0 left-0 bg-[#8A0000]"
+                        initial={{ width: 0 }}
+                        whileInView={{ width: `${partialPct * 100}%` }}
+                        transition={{ duration: 1, delay: 0.8 + i * 0.15, ease: 'easeOut' }}
+                        viewport={{ once: true }}
+                      />
+                    )}
+                    {/* Label inside segment */}
+                    <span className={`relative z-10 text-[10px] sm:text-[12px] font-black uppercase tracking-widest whitespace-nowrap ${isFilled || partialPct > 0.5 ? 'text-white' : 'text-gray-400'}`}>
+                      {p.title} {p.pct}%
+                    </span>
                   </motion.div>
                 );
               })}
             </div>
-          </div>
 
-          {/* Overall progress bar — thin elegant line */}
-          <div className="relative h-1.5 bg-gray-100 w-full overflow-hidden mb-10 sm:mb-14">
-            <motion.div
-              className="h-full bg-gradient-to-r from-[#8A0000] to-[#a01010]"
-              initial={{ width: 0 }}
-              whileInView={{ width: `${pct}%` }}
-              transition={{ duration: 2, ease: 'easeOut' }}
-              viewport={{ once: true }}
-            />
-            <motion.div
-              className="absolute top-0 left-0 h-full bg-gradient-to-r from-transparent via-white/40 to-transparent"
-              style={{ width: '30%' }}
-              animate={{ x: ['-100%', `${pct * 10}%`] }}
-              transition={{ duration: 2.5, repeat: Infinity, ease: 'linear', repeatDelay: 4 }}
-            />
+            {/* Pillar detail row below */}
+            <div className="flex mt-3">
+              {FIVE_PILLARS.map((p, i) => (
+                <div key={p.id} style={{ width: `${p.pct}%` }} className="flex items-center justify-center gap-1.5 py-2">
+                  <p.icon size={12} className="text-[#8A0000]" />
+                  <span className="text-[9px] sm:text-[10px] font-bold text-gray-500 uppercase tracking-wider">{sym}{fmtShort(p.goal)}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Overall progress line */}
+            <div className="relative h-1 bg-gray-100 w-full overflow-hidden mt-6">
+              <motion.div
+                className="h-full bg-gradient-to-r from-[#8A0000] to-[#a01010]"
+                initial={{ width: 0 }}
+                whileInView={{ width: `${pct}%` }}
+                transition={{ duration: 2, ease: 'easeOut' }}
+                viewport={{ once: true }}
+              />
+              <motion.div
+                className="absolute top-0 left-0 h-full bg-gradient-to-r from-transparent via-white/40 to-transparent"
+                style={{ width: '30%' }}
+                animate={{ x: ['-100%', `${pct * 10}%`] }}
+                transition={{ duration: 2.5, repeat: Infinity, ease: 'linear', repeatDelay: 4 }}
+              />
+            </div>
           </div>
 
           {/* Live stats row */}
@@ -466,7 +480,7 @@ export default function FundraisingCampaign({ goToPage }: Props) {
               This is not a problem that can be solved by reforming existing institutions. You cannot retrofit a cathedral into a spacecraft. The university of 2026 cannot be built by adding AI modules to a curriculum designed in 1926. The architecture itself &mdash; centralised, exclusionary, disciplinary, slow &mdash; is the problem. Not the people in it. Not even the ideas. The <strong className="text-[#141414]">structure</strong>.
             </p>
 
-            {/* Stat cards — deeper, more relevant than rankings */}
+            {/* Stat cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-10">
               {[
                 { stat: '$75K', unit: '/year', desc: 'average tuition at a top-50 global university. A gate, not a door. Price as proxy for quality has produced the most expensive exclusion mechanism in human history.' },
@@ -550,12 +564,19 @@ export default function FundraisingCampaign({ goToPage }: Props) {
             </div>
           </motion.div>
 
-          {/* ── C. Why Us — More Points of Difference ── */}
+          {/* ── C. Why Us — Visionary Points ── */}
           <motion.div {...fadeUp(caseAnim.visible, 0.3)} className="mb-20 sm:mb-28">
+            {/* Thematic Banner */}
+            <motion.div {...fadeUp(caseAnim.visible, 0.25)} className="text-center mb-12 sm:mb-16">
+              <p className="text-[28px] sm:text-[40px] md:text-[52px] font-black text-[#8A0000] leading-[1.1] tracking-tight">
+                It is a new species of university.
+              </p>
+            </motion.div>
+
             <h3 className="text-[12px] font-bold uppercase tracking-[0.3em] text-[#8A0000] mb-4">Why Us</h3>
 
             {/* Center Image — Architectural/Academic */}
-            <motion.div {...fadeUp(caseAnim.visible, 0.28)} className="mb-10 relative overflow-hidden">
+            <motion.div {...fadeUp(caseAnim.visible, 0.28)} className="mb-10 relative overflow-hidden mx-auto max-w-[1400px]">
               <img
                 src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&q=80&w=1200"
                 alt="Academic architecture — the intersection of tradition and innovation"
@@ -564,45 +585,39 @@ export default function FundraisingCampaign({ goToPage }: Props) {
               <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
             </motion.div>
 
-            <p className="text-[20px] sm:text-[24px] md:text-[28px] font-bold text-[#141414] leading-snug mb-4">
-              We didn&rsquo;t set out to build another university.<br />It is a <span className="text-[#8A0000]">new species</span> of university.
-            </p>
-            <p className="text-[16px] sm:text-[18px] text-gray-500 leading-relaxed max-w-3xl mb-10 italic">
-              We set out to build the university that every other university will become.
-            </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8 sm:gap-y-10">
               {[
                 {
-                  title: 'Distributed, Not Centralised',
-                  text: '50 Colleges across 35 countries. Knowledge doesn\'t require relocation — community still requires place. But not one place. We didn\'t build a campus. We built a network.',
+                  title: 'A New Species, Not a Renovation',
+                  text: 'We didn\'t improve the university. We reimagined it from first principles. The difference between reforming an institution and inventing one is the difference between painting a house and laying a new foundation.',
                 },
                 {
-                  title: 'Affordable by Design, Not by Discount',
-                  text: '$3,000/year. Not a subsidy — an architecture. Aid is a patch. Affordability is a cure. We eliminated the need for financial aid by making the price the mission.',
+                  title: 'Built for Homo Eruditus',
+                  text: 'Every existing university produces homo economicus — the worker who trades time for wages. Artemis produces homo eruditus — the mind that learns, unlearns, and relearns across a lifetime. The species that will inherit the post-labour economy.',
                 },
                 {
-                  title: 'Prestige Built, Not Borrowed',
-                  text: 'A consortium with London, Bologna, Sciences Po, Ca\' Foscari, and UCT. We stand on the shoulders of institutions that invented the university. We carry their standards beyond their walls.',
+                  title: '50 Places, Not One',
+                  text: 'A campus is a point. A network is a continent. 50 Colleges across 35 countries means knowledge doesn\'t require relocation. Community still requires place. But not one place. Every place.',
                 },
                 {
-                  title: 'Collegiate, Not Corporate',
-                  text: 'The Oxford model, not the research-factory model. Conversation as pedagogy. Belonging as mechanism. The research university produces papers. The collegiate university produces minds.',
+                  title: 'Self-Sustaining From Day One',
+                  text: '$262M annual surplus from Year 1. The founding campaign is the match. After that, the fire sustains itself. Your gift doesn\'t fund operations — it funds permanence.',
                 },
                 {
-                  title: 'Self-Sustaining from Year 1',
-                  text: '$262M+ annual surplus from Day 1. The campaign funds the foundation. After that, the fire sustains itself. Every scholarship, every College, every endowment dollar — paid for by the model.',
+                  title: '$3,000 by Architecture, Not by Charity',
+                  text: 'Affordability isn\'t a scholarship programme. It\'s an engineering decision. We didn\'t discount the price. We designed the price to be the mission.',
                 },
                 {
-                  title: 'Post-Disciplinary by Default',
-                  text: 'Climate. Governance. AI ethics. Pandemic response. The problems that matter don\'t respect disciplinary borders. Neither do we. Homo eruditus doesn\'t specialise in one thing — they synthesise across many.',
+                  title: 'Consortium-Born Prestige',
+                  text: 'Sciences Po. Bologna. Ca\' Foscari. UCT. London. We didn\'t build reputation from nothing. We carry the standards of the institutions that invented the university beyond their walls.',
                 },
                 {
-                  title: 'Built for the Post-Labour Economy',
-                  text: 'Every existing university produces homo economicus. That contract is broken. Artemis produces homo eruditus — the adaptive mind that thrives when industries dissolve and new ones emerge in months.',
+                  title: 'Open by Default',
+                  text: 'Research enters the public domain after seven years. Teaching shared across the Collegium. Knowledge locked behind paywalls serves no one. Closed systems don\'t just exclude people — they exclude progress itself.',
                 },
                 {
-                  title: 'Open Infrastructure, Not Closed Systems',
-                  text: 'Research in the public domain after seven years. Teaching shared across the Collegium. Degrees accredited by consortium. Closed systems don\'t just exclude people — they exclude progress itself.',
+                  title: 'The University Every Other University Will Become',
+                  text: 'Not because we compete with them. Because the forces that make Artemis necessary will eventually force every university in this direction. We\'re just first.',
                 },
               ].map((item, i) => (
                 <motion.div
@@ -663,16 +678,23 @@ export default function FundraisingCampaign({ goToPage }: Props) {
             {/* RIGHT — Bold Pillar Words Sidebar */}
             <div className="lg:col-span-3 hidden lg:flex flex-col justify-center items-end">
               <div className="sticky top-[140px] flex flex-col items-end gap-6">
-                {['PLACE', 'MINDS', 'ACCESS', 'EXCELLENCE', 'HUMAN\nPROGRESS'].map((word, i) => (
+                {['PLACE', 'MINDS', 'ACCESS', 'EXCELLENCE', 'HUMAN PROGRESS'].map((word, i) => (
                   <motion.span
                     key={i}
                     initial={{ opacity: 0, x: 30 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.6, delay: 0.3 + i * 0.1 }}
                     viewport={{ once: true }}
-                    className="text-[20px] xl:text-[24px] font-black text-[#8A0000] tracking-[0.15em] leading-tight text-right whitespace-pre-line"
+                    className={`text-[20px] xl:text-[24px] font-black text-[#8A0000] tracking-[0.15em] leading-tight text-right ${word === 'HUMAN PROGRESS' ? 'whitespace-normal' : ''}`}
                   >
-                    {word}
+                    {word === 'HUMAN PROGRESS' ? (
+                      <>
+                        <span className="block">HUMAN</span>
+                        <span className="block">PROGRESS</span>
+                      </>
+                    ) : (
+                      word
+                    )}
                   </motion.span>
                 ))}
                 <div className="w-12 h-[2px] bg-[#8A0000] mt-4" />
@@ -789,7 +811,7 @@ export default function FundraisingCampaign({ goToPage }: Props) {
       {/* ══════════════════════════════════════════
           THE ASK
           ══════════════════════════════════════════ */}
-      <section id="ask" className="scroll-mt-[110px] bg-gray-50 py-16 sm:py-24 lg:py-36">
+      <section id="ask" className="scroll-mt-[110px] bg-white py-16 sm:py-24 lg:py-36">
         <div ref={askAnim.ref} className="max-w-[1400px] mx-auto w-full px-5 sm:px-8 lg:px-20">
           <motion.div {...fadeUp(askAnim.visible)} className="bg-[#8A0000] p-8 sm:p-12 lg:p-20 text-center">
           <div className="max-w-3xl mx-auto">
@@ -820,7 +842,7 @@ export default function FundraisingCampaign({ goToPage }: Props) {
       </section>
 
       {/* ══════════════════════════════════════════
-          4. TIMELINE — 12-Month, 4-Phase Campaign
+          4. TIMELINE — 4 Phases to Launch
           ══════════════════════════════════════════ */}
       <section id="phases" className="scroll-mt-[110px] py-16 sm:py-24 lg:py-36">
         <div ref={phasesAnim.ref} className="max-w-[1400px] mx-auto w-full px-5 sm:px-8 lg:px-20">
@@ -835,9 +857,9 @@ export default function FundraisingCampaign({ goToPage }: Props) {
               ))}
             </div>
             <h2 className="text-[32px] sm:text-[44px] md:text-[56px] font-black leading-[0.92] tracking-tighter text-[#141414] mb-4">
-              12 months.<br />Four phases.
+              4 phases to launch
             </h2>
-            <p className="text-[16px] text-gray-600 max-w-xl leading-relaxed">Four phases from campaign to launch. Each phase has concrete deliverables. Not aspirations &mdash; commitments.</p>
+            <p className="text-[16px] text-gray-600 max-w-xl leading-relaxed">Four phases to launch. From campaign to campus. Not just fundraising — a complete launch sequence. Each phase has concrete deliverables. Not aspirations — commitments.</p>
           </motion.div>
 
           {/* Vertical timeline */}
@@ -1163,7 +1185,7 @@ export default function FundraisingCampaign({ goToPage }: Props) {
       </section>
 
       {/* ══════════════════════════════════════════
-          8. GIVE NOW — The Donation Form (Redesigned)
+          8. GIVE NOW — Redesigned Premium Card
           ══════════════════════════════════════════ */}
       <section id="give" className="scroll-mt-[110px] bg-white py-16 sm:py-24 lg:py-36">
         <div ref={giveAnim.ref} className="max-w-[1400px] mx-auto w-full px-5 sm:px-8 lg:px-20">
@@ -1172,33 +1194,33 @@ export default function FundraisingCampaign({ goToPage }: Props) {
           </motion.h2>
           <motion.p {...fadeUp(giveAnim.visible, 0.1)} className="text-[14px] sm:text-[16px] text-gray-600 max-w-2xl leading-relaxed mb-8 sm:mb-12">Choose your amount, select your payment method, and join the founding. For major gifts and naming opportunities, contact <a href="mailto:donate@artemis.edu" className="text-[#8A0000] font-bold hover:underline">donate@artemis.edu</a>.</motion.p>
 
-          {/* Two-column layout: Form left, Impact right */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
-            {/* LEFT — Amount + Donor Details + Payment */}
-            <div className="lg:col-span-7 space-y-6">
+          {/* Premium Card Layout */}
+          <motion.div {...fadeUp(giveAnim.visible, 0.15)} className="border border-gray-200 bg-white overflow-hidden">
+            {/* Crimson top accent border */}
+            <div className="h-1.5 bg-[#8A0000]" />
 
-              {/* Amount Selection — Elegant cards */}
-              <motion.div {...fadeUp(giveAnim.visible, 0.15)} className="bg-white border border-gray-200 shadow-sm p-6 sm:p-8">
-                <h3 className="text-[11px] font-bold uppercase tracking-widest text-[#8A0000] mb-5">Select your amount</h3>
-                <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 mb-5">
+            <div className="p-6 sm:p-10 lg:p-16">
+              {/* Amount Selection — Elegant large tap targets */}
+              <div className="mb-10 sm:mb-14">
+                <h3 className="text-[11px] font-bold uppercase tracking-widest text-[#8A0000] mb-6">Select your amount</h3>
+                <div className="flex flex-wrap gap-3 sm:gap-4 mb-6">
                   {PRESETS.map(amt => (
-                    <button key={amt} onClick={() => { setSelectedAmount(amt); setCustomAmount(''); }} className={`py-3.5 text-[13px] font-bold border-2 transition-all duration-200 ${selectedAmount === amt ? 'bg-[#8A0000] text-white border-[#8A0000] shadow-md shadow-[#8A0000]/20' : 'bg-white text-gray-700 border-gray-200 hover:border-[#8A0000] hover:text-[#8A0000] hover:shadow-sm'}`}>
+                    <button key={amt} onClick={() => { setSelectedAmount(amt); setCustomAmount(''); }} className={`px-6 sm:px-8 py-4 text-[15px] sm:text-[17px] font-black border-2 transition-all duration-200 ${selectedAmount === amt ? 'bg-[#8A0000] text-white border-[#8A0000] shadow-lg shadow-[#8A0000]/20' : 'bg-white text-gray-700 border-gray-200 hover:border-[#8A0000] hover:text-[#8A0000]'}`}>
                       {sym}{fmtShort(amt)}
                     </button>
                   ))}
                 </div>
-                <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[16px] font-bold text-gray-300">{sym}</span>
-                  <input type="number" value={customAmount} onChange={(e) => { setCustomAmount(e.target.value); setSelectedAmount(null); }} placeholder="Custom amount" className="w-full pl-8 pr-4 py-3 bg-white border-2 border-gray-200 focus:border-[#8A0000] focus:outline-none focus:shadow-sm focus:shadow-[#8A0000]/10 text-[16px] font-bold text-[#141414] placeholder:text-gray-300 transition-all" />
+                <div className="relative max-w-md">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[18px] font-bold text-gray-300">{sym}</span>
+                  <input type="number" value={customAmount} onChange={(e) => { setCustomAmount(e.target.value); setSelectedAmount(null); }} placeholder="Custom amount" className="w-full pl-8 pr-4 py-4 bg-white border-2 border-gray-200 focus:border-[#8A0000] focus:outline-none focus:shadow-sm focus:shadow-[#8A0000]/10 text-[18px] font-bold text-[#141414] placeholder:text-gray-300 transition-all" />
                 </div>
 
                 {/* Recurring toggle */}
-                <div className="mt-6 pt-6 border-t border-gray-100">
+                <div className="mt-6 pt-6 border-t border-gray-100 max-w-md">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <Repeat size={16} className="text-[#8A0000]" />
                       <span className="text-[14px] font-bold text-[#141414]">Make it recurring</span>
-                      <span className="text-[12px] text-gray-400">&mdash; multiply your impact</span>
                     </div>
                     <button onClick={() => setIsRecurring(!isRecurring)} className={`w-11 h-5 rounded-full transition-colors relative ${isRecurring ? 'bg-[#8A0000]' : 'bg-gray-300'}`}>
                       <div className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-all shadow-sm ${isRecurring ? 'left-[24px]' : 'left-0.5'}`} />
@@ -1212,46 +1234,66 @@ export default function FundraisingCampaign({ goToPage }: Props) {
                     </div>
                   )}
                 </div>
-              </motion.div>
+              </div>
 
-              {/* Donor Details */}
-              <motion.div {...slideLeft(giveAnim.visible, 0.2)} className="bg-white border border-gray-200 shadow-sm p-6 sm:p-8 space-y-5">
-                <h3 className="text-[11px] font-bold uppercase tracking-widest text-[#8A0000] mb-2">Your Details</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-[11px] font-bold text-gray-900 uppercase tracking-[0.15em] mb-2">Name</label>
-                    <input type="text" value={donorName} onChange={(e) => setDonorName(e.target.value)} disabled={isAnonymous} placeholder={isAnonymous ? 'Anonymous' : 'Your name'} className={`w-full border border-gray-200 bg-gray-50 px-4 py-3 text-[15px] text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#8A0000]/20 focus:border-[#8A0000] transition-all ${isAnonymous ? 'opacity-40' : ''}`} />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-bold text-gray-900 uppercase tracking-[0.15em] mb-2">Email *</label>
-                    <input type="email" value={donorEmail} onChange={(e) => setDonorEmail(e.target.value)} placeholder="you@email.com" className="w-full border border-gray-200 bg-gray-50 px-4 py-3 text-[15px] text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#8A0000]/20 focus:border-[#8A0000] transition-all" />
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <button onClick={() => setIsAnonymous(!isAnonymous)} className={`w-5 h-5 border-2 flex items-center justify-center transition-colors ${isAnonymous ? 'bg-[#8A0000] border-[#8A0000]' : 'bg-white border-gray-300'}`}>
-                    {isAnonymous && <Check size={12} className="text-white" />}
-                  </button>
-                  <span className="text-[13px] text-gray-600">Give anonymously</span>
-                </div>
-                <div>
-                  <label className="block text-[11px] font-bold text-gray-900 uppercase tracking-[0.15em] mb-2">Message (optional)</label>
-                  <textarea value={donorMessage} onChange={(e) => setDonorMessage(e.target.value)} placeholder="Why you're supporting Artemis..." rows={3} className="w-full border border-gray-200 bg-gray-50 px-4 py-3 text-[15px] text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#8A0000]/20 focus:border-[#8A0000] transition-all resize-none" />
-                </div>
-              </motion.div>
+              {/* Divider */}
+              <div className="h-[1px] bg-gray-100 mb-10 sm:mb-14" />
 
-              {/* Payment Method */}
-              <motion.div {...slideRight(giveAnim.visible, 0.2)} className="bg-white border border-gray-200 shadow-sm p-6 sm:p-8">
-                <h3 className="text-[11px] font-bold uppercase tracking-widest text-[#8A0000] mb-5">Payment method</h3>
-                <div className="grid grid-cols-2 gap-3 mb-6">
+              {/* Your Impact — Elegant typographic statements */}
+              <div className="mb-10 sm:mb-14">
+                <h3 className="text-[11px] font-bold uppercase tracking-widest text-[#8A0000] mb-8">Your Impact</h3>
+
+                {effectiveAmount > 0 ? (
+                  <div className="space-y-6">
+                    {/* Amount display */}
+                    <div>
+                      <span className="text-[48px] sm:text-[64px] md:text-[80px] font-black text-[#141414] leading-none tracking-tighter">
+                        {sym}{effectiveAmount.toLocaleString()}
+                      </span>
+                      {isRecurring && (
+                        <span className="text-[14px] text-[#8A0000] font-bold ml-3">{recurringFreq} &middot; {sym}{fmtShort(effectiveAmount * (recurringFreq === 'monthly' ? 12 : recurringFreq === 'quarterly' ? 4 : 1))}/yr</span>
+                      )}
+                    </div>
+
+                    {/* Giving Circle */}
+                    {(() => {
+                      const circle = getGivingCircle(effectiveAmount);
+                      if (!circle) return null;
+                      const CircleIcon = circle.icon;
+                      return (
+                        <div className="flex items-center gap-3">
+                          <CircleIcon size={20} style={{ color: circle.color }} />
+                          <span className="text-[16px] font-black text-[#141414]">{circle.name}</span>
+                          <span className="text-[13px] text-gray-500">&mdash; {circle.range}</span>
+                        </div>
+                      );
+                    })()}
+
+                    {/* Impact statement — elegant typographic */}
+                    <p className="text-[20px] sm:text-[24px] md:text-[28px] font-bold text-[#141414] leading-snug max-w-2xl">
+                      {getImpactText(effectiveAmount)}
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-[18px] sm:text-[20px] text-gray-300 italic">Select an amount to see your impact</p>
+                )}
+              </div>
+
+              {/* Divider */}
+              <div className="h-[1px] bg-gray-100 mb-10 sm:mb-14" />
+
+              {/* Payment Method — Icon-only strip */}
+              <div className="mb-10 sm:mb-14">
+                <h3 className="text-[11px] font-bold uppercase tracking-widest text-[#8A0000] mb-6">Payment method</h3>
+                <div className="flex gap-3 sm:gap-4 mb-6">
                   {[
-                    { key: 'card' as const, icon: CreditCard, label: 'Card' },
-                    { key: 'bank' as const, icon: Banknote, label: 'Bank Transfer' },
-                    { key: 'crypto' as const, icon: Bitcoin, label: 'Crypto' },
-                    { key: 'paypal' as const, icon: Wallet, label: 'PayPal' },
+                    { key: 'card' as const, icon: CreditCard },
+                    { key: 'bank' as const, icon: Banknote },
+                    { key: 'crypto' as const, icon: Bitcoin },
+                    { key: 'paypal' as const, icon: Wallet },
                   ].map(m => (
-                    <button key={m.key} onClick={() => setPaymentMethod(m.key)} className={`flex items-center gap-3 p-4 border-2 transition-all duration-200 ${paymentMethod === m.key ? 'bg-[#8A0000]/5 border-[#8A0000] text-[#8A0000] shadow-sm' : 'bg-white border-gray-200 text-gray-500 hover:border-[#8A0000]/50'}`}>
-                      <m.icon size={16} />
-                      <span className="text-[11px] font-bold uppercase tracking-widest">{m.label}</span>
+                    <button key={m.key} onClick={() => setPaymentMethod(m.key)} className={`w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center border-2 transition-all duration-200 ${paymentMethod === m.key ? 'bg-[#8A0000] border-[#8A0000] text-white shadow-lg shadow-[#8A0000]/20' : 'bg-white border-gray-200 text-gray-400 hover:border-[#8A0000] hover:text-[#8A0000]'}`}>
+                      <m.icon size={22} />
                     </button>
                   ))}
                 </div>
@@ -1288,92 +1330,50 @@ export default function FundraisingCampaign({ goToPage }: Props) {
                     </div>
                   </div>
                 )}
-              </motion.div>
-            </div>
-
-            {/* RIGHT — Your Impact Summary */}
-            <div className="lg:col-span-5">
-              <div className="lg:sticky lg:top-[130px] space-y-6">
-                {/* Impact Card */}
-                <motion.div {...fadeUp(giveAnim.visible, 0.25)} className="bg-white border border-gray-200 shadow-lg p-6 sm:p-8">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 flex items-center justify-center bg-[#8A0000]/10">
-                      <Heart size={18} className="text-[#8A0000]" />
-                    </div>
-                    <h3 className="text-[13px] font-bold uppercase tracking-widest text-[#8A0000]">Your Impact</h3>
-                  </div>
-
-                  {/* Amount display */}
-                  <div className="mb-6 pb-6 border-b border-gray-100">
-                    <div className="text-[36px] sm:text-[48px] font-black text-[#141414] leading-none tracking-tighter">
-                      {effectiveAmount > 0 ? `${sym}${effectiveAmount.toLocaleString()}` : `${sym}0`}
-                    </div>
-                    {isRecurring && effectiveAmount > 0 && (
-                      <div className="text-[13px] text-[#8A0000] font-bold mt-2">{recurringFreq} &middot; {sym}{fmtShort(effectiveAmount * (recurringFreq === 'monthly' ? 12 : recurringFreq === 'quarterly' ? 4 : 1))}/yr</div>
-                    )}
-                  </div>
-
-                  {/* Giving Circle */}
-                  {effectiveAmount > 0 && (() => {
-                    const circle = getGivingCircle(effectiveAmount);
-                    if (!circle) return null;
-                    const CircleIcon = circle.icon;
-                    return (
-                      <div className="mb-6 p-4 border-l-4" style={{ backgroundColor: circle.color + '08', borderColor: circle.color }}>
-                        <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: circle.color }}>Your Circle</span>
-                        <div className="flex items-center gap-2 mt-2">
-                          <CircleIcon size={18} style={{ color: circle.color }} />
-                          <span className="text-[16px] font-black text-[#141414]">{circle.name}</span>
-                        </div>
-                        <div className="text-[12px] text-gray-500 mt-1">{circle.range}</div>
-                      </div>
-                    );
-                  })()}
-
-                  {/* What it enables */}
-                  {effectiveAmount > 0 && (
-                    <div className="mb-6 p-4 bg-gray-50 border border-gray-100">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Star size={14} className="text-[#8A0000]" />
-                        <span className="text-[11px] font-bold uppercase tracking-widest text-[#8A0000]">What this enables</span>
-                      </div>
-                      <p className="text-[14px] text-gray-700 leading-relaxed">
-                        {effectiveAmount >= 25_000_000 && 'Name a Central Node — Venice, San Francisco, or Singapore. The apex of the Artemis network, bearing your name in perpetuity.'}
-                        {effectiveAmount >= 10_000_000 && effectiveAmount < 25_000_000 && 'Name a Tier A College or Center of Inquiry. Your name permanently associated with a flagship institution.'}
-                        {effectiveAmount >= 5_000_000 && effectiveAmount < 10_000_000 && "Name a Tier B College or Distinguished Professorship. A permanent endowment in your name."}
-                        {effectiveAmount >= 2_000_000 && effectiveAmount < 5_000_000 && 'Name a Tier C College. Your name becomes home to the next generation of leaders.'}
-                        {effectiveAmount >= 1_000_000 && effectiveAmount < 2_000_000 && "Name a Professorship or major program. A lasting academic legacy."}
-                        {effectiveAmount >= 100_000 && effectiveAmount < 1_000_000 && "Named scholarship fund or tutorial room at your chosen College."}
-                        {effectiveAmount >= 12_000 && effectiveAmount < 100_000 && "Fund a student's full scholarship for four years. The most direct way to change a life."}
-                        {effectiveAmount >= 10_000 && effectiveAmount < 12_000 && 'Your name in the founding Donor Roll — a permanent record of the founders.'}
-                        {effectiveAmount >= 99 && effectiveAmount < 10_000 && 'Waitlist priority for enrollment. You were first in line.'}
-                        {effectiveAmount > 0 && effectiveAmount < 99 && 'Every contribution counts in the founding of a university.'}
-                      </p>
-                    </div>
-                  )}
-
-                  {effectiveAmount <= 0 && (
-                    <div className="mb-6 p-4 bg-gray-50 border border-gray-100 text-center">
-                      <p className="text-[14px] text-gray-400 italic">Select an amount to see your impact</p>
-                    </div>
-                  )}
-
-                  {/* Give Now Button */}
-                  <motion.button
-                    onClick={handleDonate}
-                    disabled={submitting || !donorEmail || effectiveAmount <= 0}
-                    whileHover={!submitting && donorEmail && effectiveAmount > 0 ? { scale: 1.02 } : {}}
-                    whileTap={!submitting && donorEmail && effectiveAmount > 0 ? { scale: 0.98 } : {}}
-                    className={`w-full py-5 text-[14px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all duration-200 ${submitting || !donorEmail || effectiveAmount <= 0 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-[#8A0000] text-white hover:bg-[#6B0000] shadow-lg shadow-[#8A0000]/25'}`}
-                  >
-                    {submitting ? 'Processing...' : 'Give Now'} {!submitting && <ArrowRight size={16} />}
-                  </motion.button>
-
-                  <div className="flex items-center gap-2 mt-4 justify-center"><Lock size={10} className="text-gray-300" /><span className="text-[10px] text-gray-400">256-bit SSL encrypted</span></div>
-                </motion.div>
               </div>
+
+              {/* Divider */}
+              <div className="h-[1px] bg-gray-100 mb-10 sm:mb-14" />
+
+              {/* Donor Details */}
+              <div className="mb-10 sm:mb-14">
+                <h3 className="text-[11px] font-bold uppercase tracking-widest text-[#8A0000] mb-6">Your Details</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl">
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-900 uppercase tracking-[0.15em] mb-2">Name</label>
+                    <input type="text" value={donorName} onChange={(e) => setDonorName(e.target.value)} disabled={isAnonymous} placeholder={isAnonymous ? 'Anonymous' : 'Your name'} className={`w-full border border-gray-200 bg-gray-50 px-4 py-3 text-[15px] text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#8A0000]/20 focus:border-[#8A0000] transition-all ${isAnonymous ? 'opacity-40' : ''}`} />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-900 uppercase tracking-[0.15em] mb-2">Email *</label>
+                    <input type="email" value={donorEmail} onChange={(e) => setDonorEmail(e.target.value)} placeholder="you@email.com" className="w-full border border-gray-200 bg-gray-50 px-4 py-3 text-[15px] text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#8A0000]/20 focus:border-[#8A0000] transition-all" />
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 mt-4">
+                  <button onClick={() => setIsAnonymous(!isAnonymous)} className={`w-5 h-5 border-2 flex items-center justify-center transition-colors ${isAnonymous ? 'bg-[#8A0000] border-[#8A0000]' : 'bg-white border-gray-300'}`}>
+                    {isAnonymous && <Check size={12} className="text-white" />}
+                  </button>
+                  <span className="text-[13px] text-gray-600">Give anonymously</span>
+                </div>
+                <div className="mt-4 max-w-2xl">
+                  <label className="block text-[11px] font-bold text-gray-900 uppercase tracking-[0.15em] mb-2">Message (optional)</label>
+                  <textarea value={donorMessage} onChange={(e) => setDonorMessage(e.target.value)} placeholder="Why you're supporting Artemis..." rows={3} className="w-full border border-gray-200 bg-gray-50 px-4 py-3 text-[15px] text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#8A0000]/20 focus:border-[#8A0000] transition-all resize-none" />
+                </div>
+              </div>
+
+              {/* Give Now Button — Full width, prominent */}
+              <motion.button
+                onClick={handleDonate}
+                disabled={submitting || !donorEmail || effectiveAmount <= 0}
+                whileHover={!submitting && donorEmail && effectiveAmount > 0 ? { scale: 1.01 } : {}}
+                whileTap={!submitting && donorEmail && effectiveAmount > 0 ? { scale: 0.99 } : {}}
+                className={`w-full py-6 text-[16px] font-black uppercase tracking-[0.25em] flex items-center justify-center gap-4 transition-all duration-200 ${submitting || !donorEmail || effectiveAmount <= 0 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-[#8A0000] text-white hover:bg-[#6B0000] shadow-xl shadow-[#8A0000]/25'}`}
+              >
+                {submitting ? 'Processing...' : 'Give Now'} {!submitting && <ArrowRight size={20} />}
+              </motion.button>
+
+              <div className="flex items-center gap-2 mt-4 justify-center"><Lock size={10} className="text-gray-300" /><span className="text-[10px] text-gray-400">256-bit SSL encrypted</span></div>
             </div>
-          </div>
+          </motion.div>
 
           <AnimatePresence>
             {donationResult && (

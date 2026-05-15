@@ -296,7 +296,7 @@ function getBreadcrumbs(currentPage: string, currentProgram: string): { items: B
 
 /* ─── Page transition wrapper ─── */
 function PageTransition({ pageKey, children }: { pageKey: string; children: React.ReactNode }) {
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
   const prevKeyRef = useRef(pageKey);
 
   useEffect(() => {
@@ -308,9 +308,6 @@ function PageTransition({ pageKey, children }: { pageKey: string; children: Reac
         prevKeyRef.current = pageKey;
       }, 80);
       return () => clearTimeout(timer);
-    } else {
-      // Initial mount
-      setIsVisible(true);
     }
   }, [pageKey]);
 

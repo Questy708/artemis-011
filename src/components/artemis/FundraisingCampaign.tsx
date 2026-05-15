@@ -482,17 +482,20 @@ export default function FundraisingCampaign({ goToPage }: Props) {
             <p className="text-[20px] sm:text-[24px] md:text-[28px] font-bold text-[#141414] leading-snug mb-6">
               The world doesn&rsquo;t have a university problem.<br />It has a <span className="text-[#8A0000]">civilization problem</span>.
             </p>
+            <p className="text-[15px] sm:text-[17px] text-gray-600 leading-[1.8] max-w-3xl mb-4">
+              The modern university was designed for a world that no longer exists. It was built to serve the industrial economy &mdash; to sort workers into fixed career tracks, to certify competencies that lasted a lifetime, to produce specialists for a stable and predictable labour market. That world is gone. The institutions remain, like factories without a product, certifying skills that machines now perform better and cheaper.
+            </p>
             <p className="text-[15px] sm:text-[17px] text-gray-600 leading-[1.8] max-w-3xl mb-10">
-              The modern university was designed for a world that no longer exists. It was built to serve the industrial economy &mdash; to sort workers into fixed career tracks, to certify competencies that lasted a lifetime, to produce specialists for a stable and predictable labour market. That world is gone. The institutions remain.
+              This is not a problem that can be solved by reforming existing institutions. You cannot retrofit a cathedral into a spacecraft. The university of 2026 cannot be built by adding AI modules to a curriculum designed in 1926. The architecture itself &mdash; centralised, exclusionary, disciplinary, slow &mdash; is the problem. Not the people in it. Not even the ideas. The <strong className="text-[#141414]">structure</strong>.
             </p>
 
             {/* Stat cards — deeper, more relevant than rankings */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-10">
               {[
                 { stat: '$75K', unit: '/year', desc: 'average tuition at a top-50 global university. A gate, not a door. Price as proxy for quality has produced the most expensive exclusion mechanism in human history.' },
-                { stat: '1.5%', unit: '', desc: 'of the world\'s population has access to a research-class education. The other 98.5% are not less capable. They are less admitted.' },
-                { stat: '65%', unit: '', desc: 'of children entering primary school today will work in jobs that don\'t yet exist. Yet universities still certify for fixed disciplines on four-year cycles. The half-life of a degree is collapsing.' },
-                { stat: '$200B+', unit: '', desc: 'annual global spending on higher ed that still produces degrees employers don\'t trust, graduates who can\'t think across disciplines, and research that never leaves the journal.' },
+                { stat: '1.5%', unit: '', desc: 'of the world\'s population has access to a research-class education. The other 98.5% are not less capable. They are less admitted. Talent is distributed equally. Opportunity is not.' },
+                { stat: '65%', unit: '', desc: 'of children entering primary school today will work in jobs that don\'t yet exist. Yet universities still certify for fixed disciplines on four-year cycles. The half-life of a degree is collapsing faster than institutions can adapt.' },
+                { stat: '800M', unit: '', desc: 'capable minds on Earth will never set foot in a research university. Not because they lack ability. Because the system was never built for them. It was built for the few who could pay, relocate, and wait.' },
               ].map((item, i) => (
                 <motion.div
                   key={i}
@@ -527,9 +530,9 @@ export default function FundraisingCampaign({ goToPage }: Props) {
           <motion.div {...fadeUp(caseAnim.visible, 0.25)} className="mb-20 sm:mb-28">
             <h3 className="text-[12px] font-bold uppercase tracking-[0.3em] text-[#8A0000] mb-4">Why Now</h3>
             <p className="text-[20px] sm:text-[24px] md:text-[28px] font-bold text-[#141414] leading-snug mb-10">
-              Three forces converged. <span className="text-[#8A0000]">The window is open.</span>
+              Four forces converged. <span className="text-[#8A0000]">The window is open.</span>
             </p>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
               {[
                 {
                   num: '01',
@@ -539,12 +542,18 @@ export default function FundraisingCampaign({ goToPage }: Props) {
                 },
                 {
                   num: '02',
-                  title: 'The Access Deficit Became a Civilisation Risk',
-                  text: 'The Ivy League model works — for the 0.01% it admits. For the other 99.99%, it is an exclusion mechanism dressed in gothic stone. The West Point of the mind admits by postcode, by passport, by parentage. This isn\'t a fairness problem. It\'s a civilisation problem. When 98.5% of human potential is locked out of the institutions that shape the future, the future itself is diminished. The talent lost isn\'t a rounding error — it\'s the largest waste of human capital in history.',
-                  highlight: '98.5% of minds locked out'
+                  title: 'The Access Crisis Is Structural, Not Financial',
+                  text: 'The anti-Ivy narrative says elite universities are too expensive. That\'s true but insufficient. The real problem is structural: the model itself requires exclusion. A single-campus institution serving 20,000 students in one city cannot serve 100,000 across 35 countries — no matter how much financial aid you throw at it. You cannot solve an architectural problem with a scholarship. The system doesn\'t just exclude by price. It excludes by geography, by language, by format, by the fundamental assumption that learning requires relocation to a single place.',
+                  highlight: 'Architecture, not aid'
                 },
                 {
                   num: '03',
+                  title: 'The Post-Labour Economy Demands Homo Eruditus',
+                  text: 'The industrial economy needed homo economicus — the worker who trades time for wages in a stable career. The post-labour economy needs homo eruditus: the mind that learns, unlearns, and relearns across disciplines, across careers, across a lifetime. No existing university was designed to produce this species of human. They were built for a world where a degree lasted a lifetime. In a world where a degree lasts five years, the only lasting credential is the capacity to learn itself.',
+                  highlight: 'Learn, unlearn, relearn'
+                },
+                {
+                  num: '04',
                   title: 'Digital Infrastructure Finally Makes It Possible',
                   text: 'Five years ago, a global university with 50 physical colleges and digital-first infrastructure was a fantasy. Today, the tools exist: high-fidelity remote tutorial platforms, AI-assisted pedagogy, real-time cross-continental collaboration, and the proven viability of the Oxford collegiate model at distance. The technology didn\'t exist to do this properly before. It does now. The question is no longer "can it be done?" but "who will do it first?"',
                   highlight: 'Technology caught up with the vision'
@@ -595,6 +604,14 @@ export default function FundraisingCampaign({ goToPage }: Props) {
                 {
                   title: 'Post-Disciplinary by Default',
                   text: 'The problems that matter — climate, governance, AI ethics, pandemic response, inequality — do not respect disciplinary boundaries. Neither do we. Every student at Artemis learns across fields. Not a minor here and an elective there, but a fundamentally integrated curriculum designed for a world where the hardest problems sit at the intersection of disciplines. Homo eruditus doesn\'t specialise in one thing. They synthesise across many.',
+                },
+                {
+                  title: 'Built for the Post-Labour Economy',
+                  text: 'Every existing university was designed to produce homo economicus — the skilled worker who trades specialised knowledge for wages. That contract is broken. Artemis is designed from the ground up to produce homo eruditus — the adaptive mind that thrives when industries dissolve and new ones emerge in months. Our tutorial system teaches not content but the capacity to acquire content. Our assessment measures not recall but reasoning. Our graduates don\'t enter a career. They enter an economy that will reinvent itself three times before they retire.',
+                },
+                {
+                  title: 'Open Infrastructure, Not Closed Systems',
+                  text: 'Traditional universities operate as closed systems: proprietary curricula, gatekept credentials, paywalled research. Artemis operates on open infrastructure. Our research enters the public domain after seven years. Our teaching materials are shared across the Collegium. Our degree is accredited by a consortium, not hoarded by a single institution. In an age where knowledge compounds in the open, closed systems don\'t just exclude people — they exclude progress itself.',
                 },
               ].map((item, i) => (
                 <motion.div

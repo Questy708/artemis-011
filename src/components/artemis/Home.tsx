@@ -15,11 +15,12 @@ function useInView(threshold = 0.15) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    // Make visible by default (in case JS loads after paint)
+    el.setAttribute('data-visible', 'true');
     const obs = new IntersectionObserver(
       ([e]) => {
         if (e.isIntersecting) {
-          el.classList.add('artemis-in');
-          el.classList.remove('artemis-out');
+          el.setAttribute('data-visible', 'true');
           obs.unobserve(el);
         }
       },
@@ -45,11 +46,14 @@ export default function Home({ goToPage }: HomeProps) {
     <div className="flex-1 flex flex-col bg-white overflow-y-auto">
       {/* ── Inline keyframes for scroll-triggered animations ── */}
       <style>{`
-        .artemis-out {
+        .artemis-section {
+          transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        .artemis-section[data-visible="false"] {
           opacity: 0;
           transform: translateY(2rem);
         }
-        .artemis-in {
+        .artemis-section[data-visible="true"] {
           opacity: 1;
           transform: translateY(0);
         }
@@ -68,7 +72,7 @@ export default function Home({ goToPage }: HomeProps) {
         <div className="relative z-10 flex flex-col justify-end h-full max-w-[1000px] mx-auto w-full px-6 lg:px-16 pb-10 sm:pb-16">
           <div
             ref={heroAnim}
-            className="transition-all duration-700 artemis-out"
+            className="transition-all duration-700 artemis-section"
           >
             {/* Red line accent + label */}
             <div className="mb-8 flex items-center space-x-3">
@@ -103,7 +107,7 @@ export default function Home({ goToPage }: HomeProps) {
         <div className="max-w-[1000px] mx-auto">
           <div
             ref={articlesAnim}
-            className="transition-all duration-700 artemis-out"
+            className="transition-all duration-700 artemis-section"
           >
             {/* Section divider */}
             <div className="mb-6 flex items-center justify-between">
@@ -214,7 +218,7 @@ export default function Home({ goToPage }: HomeProps) {
         <div className="max-w-[1000px] mx-auto">
           <div
             ref={acnAnim}
-            className="transition-all duration-700 artemis-out"
+            className="transition-all duration-700 artemis-section"
           >
             <div className="max-w-5xl mb-16">
               {/* Red line accent + label */}
@@ -267,7 +271,7 @@ export default function Home({ goToPage }: HomeProps) {
         <div className="max-w-[1000px] mx-auto">
           <div
             ref={statsAnim}
-            className="transition-all duration-700 artemis-out"
+            className="transition-all duration-700 artemis-section"
           >
             <div className="mb-8 flex items-center space-x-3">
               <span className="w-8 h-[1px] bg-[#8A0000]"></span>
@@ -309,7 +313,7 @@ export default function Home({ goToPage }: HomeProps) {
         <div className="max-w-[1000px] mx-auto">
           <div
             ref={parallaxAnim}
-            className="transition-all duration-700 artemis-out"
+            className="transition-all duration-700 artemis-section"
           >
             <div className="relative w-full min-h-[380px] md:min-h-[460px] overflow-hidden">
               <img
@@ -347,7 +351,7 @@ export default function Home({ goToPage }: HomeProps) {
         <div className="max-w-[1000px] mx-auto">
           <div
             ref={mapAnim}
-            className="transition-all duration-700 artemis-out"
+            className="transition-all duration-700 artemis-section"
           >
             <ArtemisMap />
           </div>
@@ -359,7 +363,7 @@ export default function Home({ goToPage }: HomeProps) {
         <div className="max-w-[1000px] mx-auto">
           <div
             ref={numberedAnim}
-            className="transition-all duration-700 artemis-out"
+            className="transition-all duration-700 artemis-section"
           >
             <div className="max-w-4xl space-y-16">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-12">

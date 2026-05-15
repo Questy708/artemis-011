@@ -6,12 +6,12 @@ import OnThisPageNav, { useActiveSection } from '@/components/artemis/OnThisPage
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowRight, Shield, Zap, Star, Crown, Building2,
-  Home, FlaskConical, GraduationCap, BookOpen, Compass, Mail, Hash,
-  Users, Globe, MapPin, Video, Trophy,
+  FlaskConical, GraduationCap, BookOpen,
+  Users, Globe,
   ChevronDown, Check, Lock, Bitcoin, Wallet, CreditCard,
-  Banknote, Repeat, Rocket, Landmark, Flame,
-  Sparkles, CircleDot, Gem, Orbit, Heart, ChevronRight,
-  Briefcase, FileText, Gift, HandCoins, Building, LandmarkPlot, Phone
+  Banknote, Repeat, Rocket, Landmark,
+  Heart,
+  Briefcase, FileText, Gift, HandCoins, Phone
 } from 'lucide-react';
 
 interface Props {
@@ -26,35 +26,57 @@ const sym = '$';
 const pct = Math.round((CAMPAIGN.raised / CAMPAIGN.goal) * 100);
 
 const MILESTONES = [
-  { title: 'Digital Foundation', target: 5_000_000, reached: true, desc: 'Core platform and global access layer deployed. The digital backbone of a borderless university \u2014 live and operational. The Artemis Collegium Network connects our first scholars across three continents.', icon: Rocket, date: 'Completed Dec 2025', deliverables: ['Core platform live with ACN operational', 'Digital admissions and enrolment system deployed', 'First virtual residencies and seminars running'] },
-  { title: 'First Residential Hub', target: 15_000_000, reached: false, desc: 'Geneva \u2014 our first physical node with residential colleges, faculty offices, seminar rooms, and a dedicated research wing. A living proof-of-concept for the Artemis model of borderless education.', icon: Globe, date: 'Target 2027', deliverables: ['Geneva hub operational with full services', 'Founding faculty of 25 scholars in residence', 'First residential cohort of 120 students enrolled'] },
-  { title: 'Inaugural Cohort', target: 30_000_000, reached: false, desc: 'Full scholarship fund for 500 students across multiple nodes with dedicated faculty, mentorship networks, and cross-node residency programmes ensuring access regardless of background.', icon: GraduationCap, date: 'Target 2028', deliverables: ['500 full scholarships funded', 'Mentorship network connecting students across nodes', 'Cross-node residency programme for inaugural class'] },
-  { title: 'Research Endowment', target: 55_000_000, reached: false, desc: 'Perpetual endowment for ten flagship institutes with a 20-year runway \u2014 freeing researchers from the grant cycle permanently and ensuring intellectual independence across every discipline.', icon: FlaskConical, date: 'Target 2031', deliverables: ['Ten flagship research institutes permanently endowed', '20-year operational runway secured for each', 'Centres of Inquiry fully staffed and publishing'] },
-  { title: 'Ten-Node Network', target: 75_000_000, reached: false, desc: 'Ten nodes operational across six continents with the infrastructure and endowment to scale to 50+ nodes \u2014 a planetary university with borderless access, self-sustaining and permanently independent.', icon: Landmark, date: 'Target 2033', deliverables: ['Ten nodes operational across six continents', 'Self-sustaining endowment \u2014 no tuition dependency', 'Foundation laid for 50+ node global network'] },
-  { title: 'Global Scale', target: 100_000_000, reached: false, desc: 'Complete the founding campaign with a fully endowed global university \u2014 2,000 students, 200 faculty, and a perpetual endowment that ensures Artemis endures for centuries as an independent institution.', icon: Landmark, date: 'Target 2036', deliverables: ['Full founding campaign completed', 'Perpetual endowment securing centuries of independence', 'Artemis established as a permanent global institution'] },
+  { title: 'The Quiet Phase', target: 50_000_000, reached: false, desc: 'No public announcement. No website. No press. The quiet phase secures lead gifts before the world knows we exist. This is standard practice — Yale secured $3.5B before announcing "For Humanity."', icon: Lock, date: 'Months 1–4', deliverables: ['Lead donor cultivation and solicitation', '$50M in binding commitments secured', 'Campaign cabinet fully operational'] },
+  { title: 'The Public Phase', target: 85_000_000, reached: false, desc: 'The campaign goes public. Website launches. Events held. Press engaged. The full case statement reaches every major prospect worldwide.', icon: Globe, date: 'Months 5–8', deliverables: ['Public website and campaign materials live', 'Regional events across all 35 countries', '$85M cumulative commitments'] },
+  { title: 'Close & Launch', target: 100_000_000, reached: false, desc: 'Final gifts close. Properties acquired. Faculty hired. Students arrive. The match lights the fuel.', icon: Rocket, date: 'Months 9–12', deliverables: ['All $100M commitments secured', 'Properties acquired and repurposing begun', 'Faculty onboarded — students arriving'] },
 ];
 
-const CONSTELLATIONS = [
-  { id: 'c1', title: 'The Cipher', desc: 'A cryptographic token permanently recording your contribution on the Artemis ledger. Your name, encrypted, becomes part of the university\'s foundation \u2014 visible forever on the public chain. Every donor at this level receives a unique hash that proves they were among the first to believe.', min: 25, icon: Hash, color: '#8A0000', magnitude: 1 },
-  { id: 'c2', title: 'The Dispatch', desc: 'Quarterly intelligence brief from the Chancellor \u2014 exclusive essays, research previews, and strategic updates from inside the founding. Not a newsletter. A window into the build. Each dispatch includes unreleased data from our research nodes and early access to Artemis publications.', min: 100, icon: Mail, color: '#8A0000', magnitude: 2 },
-  { id: 'c3', title: 'The Passage', desc: 'Priority invitation to visit any Artemis node worldwide during the founding year. Walk the spaces, meet the community, witness the construction of something unprecedented. Includes guided access to restricted research areas and private sessions with resident faculty.', min: 500, icon: Compass, color: '#8A0000', magnitude: 3 },
-  { id: 'c4', title: 'The Codex', desc: 'A limited-edition leather-bound volume documenting the founding of Artemis \u2014 your name inscribed in the founding roll. Printed on archival paper. Meant to last centuries. Only 200 copies will ever be produced, each numbered and signed by the founding Chancellor.', min: 1000, icon: BookOpen, color: '#8A0000', magnitude: 4 },
-  { id: 'c5', title: 'The Patron', desc: 'Fully fund a named micro-scholarship for one student. You choose the focus \u2014 AI ethics, marine biology, civic design. They carry your name through their Artemis journey. You receive annual impact reports from your scholar and are invited to their thesis defence.', min: 2500, icon: GraduationCap, color: '#8A0000', magnitude: 5 },
-  { id: 'c6', title: 'The Dedication', desc: 'Name a research lab within a node. A permanent plaque, a dedication ceremony, annual reports from the researchers. Your name becomes synonymous with discovery. The lab operates under your chosen name for the lifetime of the institution.', min: 10000, icon: FlaskConical, color: '#8A0000', magnitude: 6 },
-  { id: 'c7', title: 'The Commons', desc: 'Name one of the Living Commons. Your name becomes part of daily life at Artemis \u2014 spoken by every resident, written on every map, etched into the identity of a community. Includes a dedication ceremony attended by the inaugural cohort and the Chancellor.', min: 50000, icon: Home, color: '#8A0000', magnitude: 7 },
-  { id: 'c8', title: 'The Apex', desc: 'Become the patron of an entire Artemis node. The building bears your name. The community carries your legacy. A seat on the Founders\' Council. The highest honour in the founding of a university that will endure for centuries.', min: 500000, icon: Building2, color: '#8A0000', magnitude: 8 },
+const FIVE_PILLARS = [
+  { id: 'p1', title: 'Place', subtitle: 'The 50 Colleges', goal: 82_000_000, pct: 82, icon: Building2, desc: 'A university without a physical place is a YouTube channel. Community requires co-location. Tutorials require rooms. We are not building campuses — we are finding existing buildings and giving them a second life as Colleges. Repurposed convents, warehouses, offices, factories. Each one acquired. Each one owned. Each one permanent.', details: 'Properties are 82 cents of every dollar raised. Even at 50% naming uptake, the gifts cover the property costs. Named gifts are endowments — the property is the asset. Donor names a College; the College owns the building.', color: '#8A0000' },
+  { id: 'p2', title: 'Minds', subtitle: 'Faculty Launch', goal: 7_000_000, pct: 7, icon: Users, desc: '2,000 faculty must be hired, onboarded, and in place before students arrive. This pillar covers roughly 3 months of faculty compensation before tuition revenue flows. After Day 1, the P&L covers all faculty compensation from tuition. This is a one-time bridge.', details: 'A $5M Distinguished Professorship at 4.5% yield generates $225K/year — enough to sustain one position in perpetuity. The naming gifts are endowments; the $7M pre-launch cost is the bridge.', color: '#8A0000' },
+  { id: 'p3', title: 'Access', subtitle: 'Year 1 Scholarships', goal: 5_000_000, pct: 5, icon: GraduationCap, desc: '$3,000/year is accessible to 90% of qualified students worldwide. The remaining 10% — 10,000 students in Year 1 — need assistance. After Year 1, the $262M annual surplus funds 13,300 scholarships per year. This $5M bridges the first cohort.', details: 'After Year 1, the surplus self-funds scholarships at $40M/year. Your seed gift does not run a programme — it launches a permanent scholarship machine.', color: '#8A0000' },
+  { id: 'p4', title: 'Knowledge', subtitle: 'Centers & Projects Launch', goal: 3_000_000, pct: 3, icon: FlaskConical, desc: '19 Centers of Inquiry and 42 Active Projects need startup capital: research equipment, fieldwork budgets, database subscriptions, publication subsidies, and the open knowledge infrastructure that powers the 7-year release.', details: 'After Year 1, faculty time (already compensated) covers most ongoing project work. This $3M is the seed that makes every Center operational from Day 1.', color: '#8A0000' },
+  { id: 'p5', title: 'Endurance', subtitle: 'Seed Endowment & Reserve', goal: 3_000_000, pct: 3, icon: Landmark, desc: 'The university that outlives its founders needs a corpus that outlives its donors. After Year 1, the surplus builds the endowment at $60M/year. But the first deposit — the seed — comes from the founding campaign. $3M at 4.5% = $135K/year in perpetuity from Day 1.', details: "That's enough to fund 11 full scholarships forever, before any surplus is generated. Founders' Circle gifts are cumulative across all pillars.", color: '#8A0000' },
 ];
 
-const FOUNDING_OPPORTUNITIES = [
-  { title: 'Micro-Scholarship for One Student', amount: 15000, desc: 'Fully fund a graduate student\'s tuition and living expenses for one year at any Artemis node. You choose the focus area \u2014 from synthetic intelligence to cosmological humanities. Your scholar carries your name and provides annual impact reports.', icon: GraduationCap, type: 'Scholarship' },
-  { title: 'Undergraduate Scholarship (Four Years)', amount: 60000, desc: 'Support a student through their entire Artemis journey \u2014 from matriculation to commencement. A named four-year scholarship that transforms one person\'s life and creates a ripple effect across the global network.', icon: BookOpen, type: 'Scholarship' },
-  { title: 'Artemis Dispatch Fellowship', amount: 100000, desc: 'Underwrite fellows per year in the Dispatch programme \u2014 the university\'s signature public intellectual initiative. Fellows produce research, writing, and public engagement that reaches millions.', icon: Compass, type: 'Fellowship' },
-  { title: 'Junior Research Fellowship', amount: 500000, desc: 'Endow a named Junior Fellowship supporting early-career researchers annually. Fellows receive full funding, dedicated workspace at a node, and mentorship from senior Artemis faculty \u2014 launching the next generation of independent scholars.', icon: Star, type: 'Fellowship' },
-  { title: 'Senior Fellowship & Faculty Chair', amount: 2000000, desc: 'Permanently endow a named senior faculty chair \u2014 securing world-class teaching and research at Artemis in perpetuity. The chair holder operates independently of the grant cycle, free to pursue the most ambitious and long-term research.', icon: Crown, type: 'Endowment' },
-  { title: 'Research Lab or Seminar Room', amount: 5000000, desc: 'Name a research laboratory or seminar room within an Artemis node. A permanent dedication in a space where breakthroughs happen \u2014 from computational labs to humanities seminar rooms to maker spaces.', icon: FlaskConical, type: 'Naming' },
-  { title: 'Residential College Living Commons', amount: 10000000, desc: 'Name a Living Commons within a residential college \u2014 the heart of daily life at Artemis. Your name becomes part of the community\'s identity, spoken by every resident, written on every map, for the lifetime of the institution.', icon: Home, type: 'Naming' },
-  { title: 'Centre of Inquiry', amount: 15000000, desc: 'Name one of the flagship Centres of Inquiry \u2014 a permanently endowed, independently operating research centre. Each centre carries a 20-year runway and the freedom to pursue truth without institutional pressure.', icon: FlaskConical, type: 'Naming' },
-  { title: 'Academic or Residential Building', amount: 5000000, range: '$5M \u2013 $15M', desc: 'Name a landmark academic or residential building at any Artemis node. From lecture halls to libraries, from laboratories to living commons \u2014 these are the physical spaces where the future of knowledge takes shape.', icon: Landmark, type: 'Naming' },
+const PILLAR_FINANCIAL_MODEL = [
+  { category: 'Property Acquisition + Repurpose (50 Colleges)', amount: 78_950_000, pct: 79, desc: '50 physical Colleges acquired and repurposed across 35 countries — the places where civilization\'s next minds gather.' },
+  { category: 'Faculty Pre-Launch (3 months)', amount: 6_900_000, pct: 7, desc: '3 months of compensation for 2,000 faculty before tuition revenue flows.' },
+  { category: 'Hub Pre-Opening (3 months)', amount: 2_000_000, pct: 2, desc: 'Operational costs for college hubs before student occupancy.' },
+  { category: 'Legal Incorporation (25 countries)', amount: 2_000_000, pct: 2, desc: 'Legal framework across 25 jurisdictions — the constitutional backbone of a global institution.' },
+  { category: 'Scholarship Seed (Year 1)', amount: 5_000_000, pct: 5, desc: 'Seed scholarships for 10,000 students in the first cohort who cannot pay the $3,000 tuition.' },
+  { category: 'Centers & Projects Startup', amount: 3_000_000, pct: 3, desc: 'Startup capital for 19 Centers of Inquiry and 42 Active Projects.' },
+  { category: 'Seed Endowment', amount: 2_000_000, pct: 2, desc: 'The first deposit into the perpetual endowment — $135K/year in perpetuity from Day 1.' },
+  { category: 'IT Infrastructure + Furniture', amount: 2_250_000, pct: 2, desc: 'Digital backbone and physical furnishings for 50 Colleges.' },
+];
+
+const NAMING_OPPORTUNITIES = [
+  { title: 'Tier C College', amount: 2_000_000, desc: 'Name a College in cities like Kigali, Dhaka, Kampala, Karachi. ~1,100 students. Your name becomes home to the next generation of leaders in your region.', icon: Building2, type: 'College' },
+  { title: 'Tier B College', amount: 5_000_000, desc: 'Name a College in major global cities. ~2,000 students. A permanent physical presence bearing your name, serving scholars for centuries.', icon: Building2, type: 'College' },
+  { title: 'Tier A College', amount: 10_000_000, desc: 'Name a flagship College in the world\'s great knowledge capitals. ~2,500 students. The highest-profile naming opportunity outside the Central Nodes.', icon: Building2, type: 'College' },
+  { title: 'Central Node', amount: 25_000_000, desc: 'Name one of three Central Nodes — Venice, San Francisco, Singapore. ~5,000 students. The apex of the Artemis network, bearing your name in perpetuity.', icon: Landmark, type: 'Central Node' },
+  { title: 'Distinguished Professorship', amount: 5_000_000, desc: 'At 4.5% yield, generates $225K/year — sustaining one position in perpetuity at career-level compensation. The naming gift is an endowment.', icon: Crown, type: 'Endowment' },
+  { title: 'Center of Inquiry', amount: 10_000_000, desc: 'Name one of 19 Centers of Inquiry — a permanently endowed, independently operating research centre carrying your name.', icon: FlaskConical, type: 'Naming' },
+  { title: 'Degree Program', amount: 3_000_000, desc: 'Name one of 55 degree programs. Your name associated with a specific discipline and every graduate who carries it forward.', icon: BookOpen, type: 'Naming' },
+  { title: 'Scholarship Fund', amount: 12_000, desc: 'Fund one student\'s full scholarship for four years. $3,000/year \u00d7 4 years. The most direct way to change a life.', icon: GraduationCap, type: 'Scholarship' },
+];
+
+const GIVING_CIRCLES = [
+  { name: "The Founders' Circle", range: '$10M+', min: 10_000_000, color: '#8A0000', icon: Crown, benefits: ['Name engraved on the university\'s founding document at Venice Central Node', 'Permanent seat on Board of Visitors', 'Private annual dinner with the President at rotating Central Node', 'Named endowment fund or equivalent naming opportunity', 'Recognition plaque at all 50 Colleges', 'Biographical feature in annual campaign report'] },
+  { name: "The Guardians' Circle", range: '$5M \u2013 $9.9M', min: 5_000_000, color: '#6B0000', icon: Shield, benefits: ['Named College or Center of Inquiry', 'Recognition plaque at all 50 Colleges', 'Annual Guardian\'s Lecture \u2014 a public lecture series named by you', 'Annual private briefing with the President', 'Named endowment fund'] },
+  { name: "The Builders' Circle", range: '$1M \u2013 $4.9M', min: 1_000_000, color: '#4338ca', icon: Building2, benefits: ['Named Professorship, Scholarship Fund, or major program', 'Recognition plaque at all 50 Colleges', 'Annual Builder\'s Report \u2014 detailed impact report on your named gift', 'Invitation to annual gathering', 'Feature in campaign newsletter'] },
+  { name: "The Fellows' Circle", range: '$100K \u2013 $999K', min: 100_000, color: '#0e7490', icon: Star, benefits: ['Named scholarship fund or tutorial room at chosen College', 'Recognition at chosen College', 'Annual Fellow\'s Newsletter from the President', 'Invitation to regional events'] },
+  { name: 'Friends of Artemis', range: '$10K \u2013 $99K', min: 10_000, color: '#15803d', icon: Heart, benefits: ['Name in founding Donor Roll (permanent digital and print record)', 'Digital certificate of founding support', 'Quarterly progress updates', 'Invitation to online events'] },
+  { name: 'The 99', range: '$99', min: 99, color: '#6b7280', icon: Users, benefits: ['Waitlist priority for enrollment', 'Digital recognition on community wall', 'Monthly community updates', 'The knowledge that you were first in line'] },
+];
+
+const TIER_COLORS: Record<string, string> = { founders: '#8A0000', guardians: '#6B0000', builders: '#4338ca', fellows: '#0e7490', friends: '#15803d', the99: '#6b7280' };
+const TIER_LABELS: Record<string, string> = { founders: "Founders' Circle", guardians: "Guardians' Circle", builders: "Builders' Circle", fellows: "Fellows' Circle", friends: 'Friends of Artemis', the99: 'The 99' };
+
+const DONOR_SEGMENTS = [
+  { segment: 'Lead Donors', count: '10 gifts', target: '$70M', pct: 70, desc: '70% of the campaign from 10 donors. This is how founding campaigns work.' },
+  { segment: 'Major Donors', count: '20 gifts', target: '$20M', pct: 20, desc: '20 donors at the $1M\u2013$5M level, building the academic infrastructure.' },
+  { segment: 'Community', count: 'Unlimited', target: '$10M', pct: 10, desc: 'Hundreds of donors at $10K\u2013$999K, seeding scholarships, rooms, and research.' },
 ];
 
 const WAYS_TO_GIVE = [
@@ -68,45 +90,37 @@ const WAYS_TO_GIVE = [
   { title: 'In-Kind Contributions', desc: 'Donate equipment, technology, library materials, real estate, or professional services. In-kind gifts that support the academic mission are valued and recognised in the same way as financial contributions.', icon: Heart },
 ];
 
-const FINANCIAL_GOALS = [
-  { category: 'Student Access & Scholarships', amount: 30000000, pct: 30, desc: 'Full scholarships, travel grants, and living stipends ensuring that admission to Artemis is never determined by a student\'s ability to pay.' },
-  { category: 'Research Endowment', amount: 25000000, pct: 25, desc: 'Perpetual endowment for ten flagship Centres of Inquiry with 20-year operational runways \u2014 freeing researchers from the grant cycle.' },
-  { category: 'Faculty & Fellows', amount: 20000000, pct: 20, desc: 'Recruitment and retention of world-class senior and junior fellows, endowed chairs, and the academic staff that make the Artemis model possible.' },
-  { category: 'Physical Nodes & Facilities', amount: 15000000, pct: 15, desc: 'Acquisition, construction, and outfitting of residential colleges, hubs, and shared spaces across the global network.' },
-  { category: 'Digital Infrastructure', amount: 10000000, pct: 10, desc: 'The ACN platform, global learning tools, synchronised teaching systems, and the data backbone connecting every node.' },
-];
-
-const EVENTS = [
-  { title: 'The Founding Convocation', type: 'Gala', desc: 'An evening of vision and commitment. Meet the Chancellor and founding faculty at the Geneva node. Black tie. Historic.', date: '15 Sep 2026', weekday: 'Mon', location: 'Geneva', virtual: false, capacity: 200, registered: 87, price: 500, icon: Crown },
-  { title: 'Inside the Build', type: 'Webinar', desc: 'Walk through the digital and physical architecture of Artemis with the design team. Live Q&A with founding engineers.', date: '22 Jul 2026', weekday: 'Wed', location: 'Online', virtual: true, capacity: 1000, registered: 432, price: 0, icon: Video },
-  { title: 'Double Impact Day', type: 'Matching', desc: 'Every dollar donated is matched by the Catalyst Foundation. Your $1 becomes $2. 24 hours only.', date: '1 Oct 2026', weekday: 'Thu', location: 'Global', virtual: true, capacity: null, registered: 0, price: null, icon: Zap },
-  { title: 'The Artemis Auction', type: 'Auction', desc: 'Bid on naming rights, original artwork, and exclusive experiences. All proceeds fund the Global Scholars Fund.', date: '20 Nov 2026', weekday: 'Fri', location: 'London', virtual: false, capacity: 150, registered: 34, price: 250, icon: Star },
-  { title: 'Hack the Future', type: 'Hackathon', desc: 'A founding-weekend hackathon where donors and students co-build tools for the Artemis platform.', date: '8 Aug 2026', weekday: 'Sat', location: 'San Francisco', virtual: false, capacity: 100, registered: 61, price: 0, icon: Flame },
-  { title: 'Spring Benefactor Dinner', type: 'Dinner', desc: 'An intimate dinner for major donors at the Valletta node. Michelin-starred cuisine and the future of knowledge.', date: '14 Mar 2027', weekday: 'Sun', location: 'Valletta', virtual: false, capacity: 80, registered: 22, price: 1000, icon: Gem },
-];
-
 const DONORS = [
-  { name: 'The Nordgren Foundation', amount: 100000, date: '28 Apr', msg: 'Investing in the infrastructure of imagination.', tier: 'chancellors' },
-  { name: 'Chen Wei Laboratories', amount: 50000, date: '4 May', msg: null, tier: 'founders' },
-  { name: 'Dr. Elena Vasquez', amount: 25000, date: '10 May', msg: 'For the students who will change everything.', tier: 'founders' },
-  { name: 'Anonymous Patron', amount: 40000, date: '7 May', msg: 'Because knowledge should have no borders.', tier: 'chancellors' },
-  { name: 'The Matsuo Trust', amount: 30000, date: '18 Apr', msg: null, tier: 'founders' },
-  { name: 'Liu Fang Foundation', amount: 15000, date: '25 Apr', msg: null, tier: 'guild' },
-  { name: 'James & Priya Okonkwo', amount: 5000, date: '8 May', msg: null, tier: 'guild' },
-  { name: 'The Al-Rashidi Family', amount: 3000, date: '5 May', msg: 'In memory of Fatima Al-Rashidi.', tier: 'guild' },
-  { name: 'Dr. Robert & Sarah Kimani', amount: 2500, date: '22 Apr', msg: 'For the next generation of African scholars.', tier: 'guild' },
-  { name: 'Sven & Astrid Lindqvist', amount: 5000, date: '20 Apr', msg: 'For the north, and for everywhere.', tier: 'guild' },
-  { name: 'Anonymous', amount: 1000, date: '23 Apr', msg: null, tier: 'community' },
-  { name: 'Takeshi Yamamoto', amount: 500, date: '2 May', msg: null, tier: 'community' },
-  { name: 'Maria Santos', amount: 250, date: '3 May', msg: 'Proud to be part of the founding.', tier: 'community' },
-  { name: 'Amara Osei', amount: 100, date: '27 Apr', msg: 'Every great university starts with a first believer.', tier: 'community' },
-  { name: 'Isla McGregor', amount: 150, date: '15 Apr', msg: 'A small stone in a great cathedral.', tier: 'community' },
+  { name: 'The Nordgren Foundation', amount: 100000, date: '28 Apr', msg: 'Investing in the infrastructure of imagination.', tier: 'fellows' },
+  { name: 'Chen Wei Laboratories', amount: 50000, date: '4 May', msg: null, tier: 'friends' },
+  { name: 'Dr. Elena Vasquez', amount: 25000, date: '10 May', msg: 'For the students who will change everything.', tier: 'friends' },
+  { name: 'Anonymous Patron', amount: 40000, date: '7 May', msg: 'Because knowledge should have no borders.', tier: 'friends' },
+  { name: 'The Matsuo Trust', amount: 30000, date: '18 Apr', msg: null, tier: 'friends' },
+  { name: 'Liu Fang Foundation', amount: 15000, date: '25 Apr', msg: null, tier: 'friends' },
+  { name: 'James & Priya Okonkwo', amount: 5000, date: '8 May', msg: null, tier: 'the99' },
+  { name: 'The Al-Rashidi Family', amount: 3000, date: '5 May', msg: 'In memory of Fatima Al-Rashidi.', tier: 'the99' },
+  { name: 'Dr. Robert & Sarah Kimani', amount: 2500, date: '22 Apr', msg: 'For the next generation of African scholars.', tier: 'the99' },
+  { name: 'Sven & Astrid Lindqvist', amount: 5000, date: '20 Apr', msg: 'For the north, and for everywhere.', tier: 'the99' },
+  { name: 'Anonymous', amount: 1000, date: '23 Apr', msg: null, tier: 'the99' },
+  { name: 'Takeshi Yamamoto', amount: 500, date: '2 May', msg: null, tier: 'the99' },
+  { name: 'Maria Santos', amount: 250, date: '3 May', msg: 'Proud to be part of the founding.', tier: 'the99' },
+  { name: 'Amara Osei', amount: 100, date: '27 Apr', msg: 'Every great university starts with a first believer.', tier: 'the99' },
+  { name: 'Isla McGregor', amount: 150, date: '15 Apr', msg: 'A small stone in a great cathedral.', tier: 'the99' },
 ];
 
-const TIER_COLORS: Record<string, string> = { chancellors: '#8A0000', founders: '#4338ca', guild: '#0e7490', community: '#15803d' };
-const TIER_LABELS: Record<string, string> = { chancellors: "Chancellor's Circle", founders: "Founder's Society", guild: 'Guild Partners', community: 'Community' };
 const CRYPTO = { BTC: 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh', ETH: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F' };
 const PRESETS = [25, 100, 500, 1000, 5000, 10000];
+
+/* ─── Helpers ─── */
+function getGivingCircle(amount: number) {
+  if (amount >= 10_000_000) return GIVING_CIRCLES[0];
+  if (amount >= 5_000_000) return GIVING_CIRCLES[1];
+  if (amount >= 1_000_000) return GIVING_CIRCLES[2];
+  if (amount >= 100_000) return GIVING_CIRCLES[3];
+  if (amount >= 10_000) return GIVING_CIRCLES[4];
+  if (amount >= 99) return GIVING_CIRCLES[5];
+  return null;
+}
 
 /* ─── Hooks ─── */
 function useInView(threshold = 0.15) {
@@ -188,7 +202,7 @@ function AnimatedCounter({ value, prefix = '', suffix = '', className = '' }: { 
 
 /* ─── Main Component ─── */
 export default function FundraisingCampaign({ goToPage }: Props) {
-  const activeSection = useActiveSection(['case', 'goals', 'phases', 'opportunities', 'ways', 'give', 'founders', 'beyond']);
+  const activeSection = useActiveSection(['case', 'pillars', 'phases', 'opportunities', 'circles', 'ways', 'give', 'model']);
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
   const [customAmount, setCustomAmount] = useState('');
   const [donorName, setDonorName] = useState('');
@@ -202,15 +216,18 @@ export default function FundraisingCampaign({ goToPage }: Props) {
   const [selectedPerk, setSelectedPerk] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [donationResult, setDonationResult] = useState<{ success: boolean; message: string } | null>(null);
+  const [expandedPillar, setExpandedPillar] = useState<string | null>(null);
+  const [expandedCircle, setExpandedCircle] = useState<string | null>(null);
 
   const heroAnim = useInView(0);
   const caseAnim = useInView(0);
-  const goalsAnim = useInView(0);
+  const pillarsAnim = useInView(0);
   const phasesAnim = useInView(0);
   const opportunitiesAnim = useInView(0);
+  const circlesAnim = useInView(0);
   const waysAnim = useInView(0);
   const giveAnim = useInView(0);
-  const foundersAnim = useInView(0);
+  const modelAnim = useInView(0);
   const beyondAnim = useInView(0);
 
   const effectiveAmount = selectedAmount || parseFloat(customAmount) || 0;
@@ -239,14 +256,14 @@ export default function FundraisingCampaign({ goToPage }: Props) {
     <div className="flex flex-col bg-white">
 
       {/* ══════════════════════════════════════════
-          1. HERO — Matches site pattern
+          1. HERO
           ══════════════════════════════════════════ */}
       <section className="relative w-full overflow-hidden">
         <div className="max-w-[1600px] mx-auto">
           <div className="relative w-full h-[40vh] sm:h-[45vh] min-h-[300px] sm:min-h-[360px] overflow-hidden">
             <img
               src="https://images.unsplash.com/photo-1624555130296-e551faf8969b?auto=format&fit=crop&q=80&w=1800"
-              alt="Igniting the Light — The Founders Campaign"
+              alt="For Civilization — The Founding Campaign"
               className="absolute inset-0 w-full h-full object-cover grayscale"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
@@ -257,10 +274,13 @@ export default function FundraisingCampaign({ goToPage }: Props) {
                   <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#8A0000]">The Founding Campaign</span>
                 </div>
                 <h1 className="text-[30px] sm:text-[44px] md:text-[56px] font-extrabold leading-[1.05] tracking-tighter text-white mb-4 uppercase">
-                  Igniting the Light
+                  For Civilization
                 </h1>
-                <p className="text-[15px] sm:text-[18px] text-white/70 max-w-xl leading-relaxed font-light mb-6 sm:mb-8">
-                  The Founders Campaign for the University of Artemis. Help us build a borderless university that will endure for centuries.
+                <p className="text-[15px] sm:text-[18px] text-white/70 max-w-xl leading-relaxed font-light mb-4 sm:mb-6">
+                  The Founding Campaign for the University of Artemis. $100M. 12 months. The kickstart that makes everything else self-sustaining.
+                </p>
+                <p className="text-[13px] sm:text-[15px] text-[#8A0000]/90 font-bold uppercase tracking-[0.15em] mb-6 sm:mb-8">
+                  The campaign is the match. Tuition is the fuel. The fire sustains itself.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <button onClick={() => document.getElementById('give')?.scrollIntoView({ behavior: 'smooth' })} className="flex items-center space-x-3 px-8 py-4 bg-[#8A0000] text-white text-[12px] font-bold uppercase tracking-[0.25em] hover:bg-[#6B0000] transition-colors group">
@@ -393,8 +413,8 @@ export default function FundraisingCampaign({ goToPage }: Props) {
                 {[
                   { label: 'Donors', value: CAMPAIGN.donors, animate: true, icon: Users },
                   { label: 'Avg. Gift', value: Math.round(CAMPAIGN.raised / CAMPAIGN.donors), prefix: sym, animate: true, icon: CreditCard },
-                  { label: 'Countries', value: 14, animate: false, icon: Globe },
-                  { label: 'Days Left', value: 247, animate: false, icon: Zap },
+                  { label: 'Countries', value: 35, animate: false, icon: Globe },
+                  { label: 'Months', value: 12, animate: false, icon: Zap },
                 ].map((stat, i) => (
                   <motion.div
                     key={i}
@@ -432,19 +452,19 @@ export default function FundraisingCampaign({ goToPage }: Props) {
       <OnThisPageNav
         sections={[
           { id: 'case', label: 'The Case' },
-          { id: 'goals', label: 'Your Gift' },
-          { id: 'phases', label: 'Phases' },
-          { id: 'opportunities', label: 'Opportunities' },
+          { id: 'pillars', label: 'Five Pillars' },
+          { id: 'phases', label: 'Timeline' },
+          { id: 'opportunities', label: 'Naming' },
+          { id: 'circles', label: 'Giving Circles' },
           { id: 'ways', label: 'Ways to Give' },
           { id: 'give', label: 'Give Now' },
-          { id: 'founders', label: 'Founders' },
-          { id: 'beyond', label: 'Beyond' },
+          { id: 'model', label: 'The Math' },
         ]}
         activeSection={activeSection}
       />
 
       {/* ══════════════════════════════════════════
-          2. THE CASE — Asymmetric Editorial Layout
+          2. THE CASE — 200 Million
           ══════════════════════════════════════════ */}
       <section id="case" className="scroll-mt-[110px] py-16 sm:py-24 lg:py-36">
         <div ref={caseAnim.ref} className="max-w-[1400px] mx-auto w-full px-5 sm:px-8 lg:px-20">
@@ -452,82 +472,89 @@ export default function FundraisingCampaign({ goToPage }: Props) {
             {/* LEFT — Big editorial headline + body */}
             <div className="lg:col-span-7">
               <motion.h2 {...slideLeft(caseAnim.visible)} className="text-[32px] sm:text-[44px] md:text-[60px] lg:text-[72px] font-black leading-[0.92] tracking-tighter text-[#141414] mb-8 sm:mb-12">
-                Why Artemis?<br />
-                <span className="text-[#8A0000]">Why now?</span>
+                200 million<br />
+                <span className="text-[#8A0000]">Why this. Why now. Why you.</span>
               </motion.h2>
               <motion.div {...fadeUp(caseAnim.visible, 0.2)} className="space-y-5 text-[16px] text-gray-600 leading-[1.75]">
-                <p>Across the world, brilliant minds are locked out of the institutions that shape knowledge &mdash; not by a lack of talent, but by geography, cost, and the closed architecture of legacy universities. The model that served the nineteenth century cannot serve the twenty-first. Artemis exists to change this.</p>
+                <p>200 million people qualified for university who will never attend. Not because they lack merit. Because the system was designed in a different century for a different species of student.</p>
                 <p>We believe that <em className="text-gray-800">access to world-class education should not depend on where you were born</em>. That <strong className="text-gray-900">academic excellence and global inclusion are not competing values &mdash; they are the same value</strong>. And that a university dedicated to <strong className="text-gray-900">freedom of thought, freedom of inquiry, and freedom of expression</strong> is not merely desirable &mdash; it is necessary for the progress of civilisation itself.</p>
-                <p>Artemis is a borderless, network-native university built on three pillars: <strong className="text-gray-900">Broadening Access</strong> &mdash; bridging the gap between talent and opportunity regardless of geography or means; <strong className="text-gray-900">Advancing Excellence</strong> &mdash; personalised, research-driven education sustained by rigorous standards and technological innovation; and <strong className="text-gray-900">Guarding Freedom</strong> &mdash; upholding the democratic, humane, and international values that make the pursuit of truth possible, with freedom of thought and inquiry as non-negotiable commitments.</p>
-                <p>Our operating philosophy is one of <strong className="text-gray-900">Foundational Efficiency</strong> &mdash; ninety cents of every dollar goes directly to academic programmes, student access, and research. We have no redundant campuses, no bloated administration. We have scholars, students, and a mission. The Founding Campaign provides the strategic capital to endow our first residential colleges, launch our Centres of Inquiry, and build the digital infrastructure that makes a borderless university possible.</p>
               </motion.div>
-              <motion.button {...fadeUp(caseAnim.visible, 0.4)} onClick={() => document.getElementById('give')?.scrollIntoView({ behavior: 'smooth' })} className="flex items-center space-x-4 py-2 mt-10 border-b-2 border-[#8A0000] text-[#8A0000] text-[12px] font-bold uppercase tracking-[0.2em] hover:text-[#141414] hover:border-[#141414] transition-all group">
+
+              {/* The Answer in Four Numbers */}
+              <motion.div {...fadeUp(caseAnim.visible, 0.35)} className="mt-10 sm:mt-14 grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
+                {[
+                  { num: '100,000', label: 'Students' },
+                  { num: '50', label: 'Colleges' },
+                  { num: '$3,000', label: 'Per Year' },
+                  { num: '12.4%', label: 'Cost Ratio' },
+                ].map((item, i) => (
+                  <div key={i} className="border-l-2 border-[#8A0000] pl-3 sm:pl-4">
+                    <div className="text-[24px] sm:text-[32px] font-black text-[#8A0000] leading-none">{item.num}</div>
+                    <div className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.2em] text-gray-500 mt-1">{item.label}</div>
+                  </div>
+                ))}
+              </motion.div>
+
+              {/* The Ask in One Number */}
+              <motion.div {...fadeUp(caseAnim.visible, 0.45)} className="mt-10 sm:mt-14 p-5 sm:p-8 bg-gray-50 border-l-4 border-[#8A0000]">
+                <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#8A0000] block mb-2">The Ask in One Number</span>
+                <div className="text-[40px] sm:text-[56px] md:text-[72px] font-black text-[#141414] leading-none tracking-tighter">{sym}100M</div>
+                <p className="text-[14px] sm:text-[15px] text-gray-600 leading-relaxed mt-4">Yale&rsquo;s For Humanity campaign raised $7 billion for 14,000 students. That&rsquo;s $500,000 per student. Artemis asks $100 million for 100,000 students. That&rsquo;s $1,000 per student. <strong className="text-[#141414]">Five hundred times more efficient.</strong> Not because we cut corners. Because we cut tradition.</p>
+              </motion.div>
+
+              <motion.button {...fadeUp(caseAnim.visible, 0.55)} onClick={() => document.getElementById('give')?.scrollIntoView({ behavior: 'smooth' })} className="flex items-center space-x-4 py-2 mt-10 border-b-2 border-[#8A0000] text-[#8A0000] text-[12px] font-bold uppercase tracking-[0.2em] hover:text-[#141414] hover:border-[#141414] transition-all group">
                 <span>Support the Campaign</span>
                 <ArrowRight size={14} className="group-hover:translate-x-2 transition-transform" />
               </motion.button>
             </div>
 
-            {/* RIGHT — Three pillars as large statements */}
+            {/* RIGHT — Large typography statements */}
             <div className="lg:col-span-5">
-              <motion.div {...slideRight(caseAnim.visible, 0.15)} className="space-y-6 sm:space-y-10 mb-8 sm:mb-12">
-                {[
-                  { value: 'Broaden', label: 'Access', desc: 'Talent has no postcode. Opportunity should not either.' },
-                  { value: 'Advance', label: 'Excellence', desc: 'Research-driven rigour, powered by innovation, not inertia.' },
-                  { value: 'Guard', label: 'Freedom', desc: 'Thought, inquiry, and expression \u2014 non-negotiable.' },
-                ].map((item, i) => (
-                  <div key={i}>
-                    <div className="text-[36px] sm:text-[64px] lg:text-[96px] font-black text-[#8A0000] leading-none tracking-tighter">{item.value}</div>
-                    <div className="flex items-baseline gap-2 sm:gap-3 mt-1">
-                      <span className="text-[11px] sm:text-[13px] font-bold uppercase tracking-[0.2em] text-[#141414]">{item.label}</span>
-                      <span className="text-[11px] sm:text-[13px] text-gray-400">&mdash;</span>
-                      <span className="text-[11px] sm:text-[13px] text-gray-500">{item.desc}</span>
-                    </div>
+              <motion.div {...slideRight(caseAnim.visible, 0.15)} className="space-y-8 sm:space-y-12">
+                <div>
+                  <div className="text-[48px] sm:text-[72px] lg:text-[120px] font-black text-[#8A0000] leading-none tracking-tighter">200M</div>
+                  <div className="flex items-baseline gap-2 sm:gap-3 mt-1">
+                    <span className="text-[11px] sm:text-[13px] font-bold uppercase tracking-[0.2em] text-[#141414]">Missing</span>
+                    <span className="text-[11px] sm:text-[13px] text-gray-400">&mdash;</span>
+                    <span className="text-[11px] sm:text-[13px] text-gray-500">Qualified for university. Never attending.</span>
                   </div>
-                ))}
+                </div>
+                <div>
+                  <div className="text-[48px] sm:text-[72px] lg:text-[120px] font-black text-[#141414] leading-none tracking-tighter">100K</div>
+                  <div className="flex items-baseline gap-2 sm:gap-3 mt-1">
+                    <span className="text-[11px] sm:text-[13px] font-bold uppercase tracking-[0.2em] text-[#8A0000]">Students</span>
+                    <span className="text-[11px] sm:text-[13px] text-gray-400">&mdash;</span>
+                    <span className="text-[11px] sm:text-[13px] text-gray-500">In Year 1 alone. Across 35 countries.</span>
+                  </div>
+                </div>
               </motion.div>
             </div>
           </div>
-
-          {/* Strategic initiatives — Full-width horizontal band (4 initiatives) */}
-          <motion.div {...fadeUp(caseAnim.visible, 0.3)} className="grid grid-cols-1 md:grid-cols-2 gap-0 mt-12 sm:mt-20 border-t border-gray-200">
-            <div className="border-l-4 border-[#8A0000] p-5 sm:p-8 lg:p-10 bg-white hover:bg-gray-50 transition-colors">
-              <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#8A0000] block mb-3">Strategic Initiative</span>
-              <h4 className="text-[20px] font-bold text-[#141414] mb-3">Endowment for Autonomous Research</h4>
-              <p className="text-[14px] text-gray-600 leading-relaxed">A permanent endowment supporting interdisciplinary research hubs that operate independently of state or commercial agendas &mdash; each with a 20-year operational runway that frees researchers from the grant cycle and protects the independence that real discovery demands.</p>
-            </div>
-            <div className="border-l-4 border-[#8A0000] p-5 sm:p-8 lg:p-10 bg-white hover:bg-gray-50 transition-colors">
-              <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#8A0000] block mb-3">Strategic Initiative</span>
-              <h4 className="text-[20px] font-bold text-[#141414] mb-3">The Global Scholars Fund</h4>
-              <p className="text-[14px] text-gray-600 leading-relaxed">Full-ride scholarships, virtual residencies, and travel grants for scholars from every corner of the world &mdash; ensuring that admission to Artemis is determined by the quality of your mind, never by the limits of your means.</p>
-            </div>
-            <div className="border-l-4 border-[#8A0000] p-5 sm:p-8 lg:p-10 bg-white hover:bg-gray-50 transition-colors border-t border-gray-200">
-              <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#8A0000] block mb-3">Strategic Initiative</span>
-              <h4 className="text-[20px] font-bold text-[#141414] mb-3">Residential Colleges &amp; Global Hubs</h4>
-              <p className="text-[14px] text-gray-600 leading-relaxed">Living-learning environments across continents where the Artemis community takes physical form &mdash; residential colleges with communal dining, seminar rooms, maker spaces, and the daily intellectual collision that only shared space can create.</p>
-            </div>
-            <div className="border-l-4 border-[#8A0000] p-5 sm:p-8 lg:p-10 bg-white hover:bg-gray-50 transition-colors border-t border-gray-200">
-              <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#8A0000] block mb-3">Strategic Initiative</span>
-              <h4 className="text-[20px] font-bold text-[#141414] mb-3">Senior &amp; Junior Fellows Programme</h4>
-              <p className="text-[14px] text-gray-600 leading-relaxed">Endowed fellowships for distinguished senior scholars and the most promising early-career researchers &mdash; building the intellectual core of Artemis by attracting minds that refuse to be constrained by borders, fixed-term contracts, or the grant cycle.</p>
-            </div>
-          </motion.div>
         </div>
       </section>
 
       {/* ══════════════════════════════════════════
-          3. WHERE YOUR GIFT GOES — Financial Goals + Pull Quote
+          3. FIVE PILLARS — The Campaign Structure
           ══════════════════════════════════════════ */}
-      <section id="goals" className="scroll-mt-[110px] bg-gray-50 py-16 sm:py-24 lg:py-36">
-        <div ref={goalsAnim.ref} className="max-w-[1400px] mx-auto w-full px-5 sm:px-8 lg:px-20">
+      <section id="pillars" className="scroll-mt-[110px] bg-gray-50 py-16 sm:py-24 lg:py-36">
+        <div ref={pillarsAnim.ref} className="max-w-[1400px] mx-auto w-full px-5 sm:px-8 lg:px-20">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-            {/* LEFT — Campaign summary as a clean table */}
+            {/* LEFT — Intro + dominating 82% stat */}
             <div className="lg:col-span-5">
-              <motion.h2 {...slideLeft(goalsAnim.visible)} className="text-[32px] sm:text-[44px] md:text-[56px] font-black leading-[0.92] tracking-tighter text-[#141414] mb-4">
-                Where your<br />gift goes
+              <motion.h2 {...slideLeft(pillarsAnim.visible)} className="text-[32px] sm:text-[44px] md:text-[56px] font-black leading-[0.92] tracking-tighter text-[#141414] mb-4">
+                Five pillars
               </motion.h2>
-              <motion.p {...fadeUp(goalsAnim.visible, 0.15)} className="text-[16px] text-gray-600 max-w-md leading-relaxed mb-12">Every dollar donated is a strategic investment in the future of knowledge. Here is how the {sym}{fmtShort(CAMPAIGN.goal)} founding goal is allocated.</motion.p>
+              <motion.p {...fadeUp(pillarsAnim.visible, 0.15)} className="text-[16px] text-gray-600 max-w-md leading-relaxed mb-10 sm:mb-14">Every dollar of the $100M campaign falls into one of five pillars. Place dominates &mdash; because without rooms, there is no community.</motion.p>
 
-              <motion.div {...fadeUp(goalsAnim.visible, 0.25)} className="bg-white">
+              {/* Dominating 82% stat */}
+              <motion.div {...scaleIn(pillarsAnim.visible, 0.25)} className="border-l-4 border-[#8A0000] pl-5 sm:pl-8 mb-10 sm:mb-14">
+                <div className="text-[64px] sm:text-[96px] lg:text-[120px] font-black text-[#8A0000] leading-none tracking-tighter">82%</div>
+                <div className="text-[14px] sm:text-[16px] font-bold text-[#141414] mt-2">of every dollar goes to Place</div>
+                <p className="text-[13px] text-gray-500 mt-2 leading-relaxed">50 Colleges. 35 countries. Acquired and repurposed. Each one permanent. Each one owned.</p>
+              </motion.div>
+
+              {/* Campaign summary table */}
+              <motion.div {...fadeUp(pillarsAnim.visible, 0.35)} className="bg-white">
                 <div className="divide-y divide-gray-100">
                   {[
                     { label: 'Campaign Goal', value: `${sym}${fmtShort(CAMPAIGN.goal)}`, highlight: false },
@@ -542,7 +569,7 @@ export default function FundraisingCampaign({ goToPage }: Props) {
                   ))}
                 </div>
                 <div className="px-6 py-5 bg-gray-50">
-                  <p className="text-[13px] text-gray-500 leading-relaxed">90% of all contributions go directly to academic programmes, student access, and research.</p>
+                  <p className="text-[13px] text-gray-500 leading-relaxed">82% of all contributions go directly to property acquisition and repurposing.</p>
                   <button onClick={() => document.getElementById('give')?.scrollIntoView({ behavior: 'smooth' })} className="flex items-center space-x-3 mt-4 px-6 py-3 bg-[#8A0000] text-white text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-[#6B0000] transition-colors group">
                     <span>Contribute Now</span><ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
                   </button>
@@ -550,61 +577,84 @@ export default function FundraisingCampaign({ goToPage }: Props) {
               </motion.div>
             </div>
 
-            {/* RIGHT — Bar chart */}
+            {/* RIGHT — Pillar cards */}
             <div className="lg:col-span-7">
-              <div className="space-y-6">
-                {FINANCIAL_GOALS.map((g, i) => (
-                  <motion.div key={i} {...slideRight(goalsAnim.visible, i * 0.1)}>
-                    <div className="flex items-baseline justify-between mb-2 gap-2">
-                      <span className="text-[13px] sm:text-[15px] font-bold text-[#141414]">{g.category}</span>
-                      <span className="text-[13px] sm:text-[14px] font-black text-[#8A0000] shrink-0">{sym}{fmtShort(g.amount)}</span>
-                    </div>
-                    <div className="h-4 bg-gray-200 w-full overflow-hidden">
-                      <motion.div className="h-full bg-[#8A0000]" initial={{ width: 0 }} whileInView={{ width: `${g.pct}%` }} transition={{ duration: 1.4, delay: i * 0.12, ease: 'easeOut' }} viewport={{ once: true }} />
-                    </div>
-                    <div className="flex items-start justify-between mt-2 gap-2">
-                      <span className="text-[11px] sm:text-[12px] text-gray-500 leading-snug">{g.desc}</span>
-                      <span className="text-[11px] sm:text-[12px] font-black text-gray-400 shrink-0">{g.pct}%</span>
-                    </div>
-                  </motion.div>
-                ))}
+              <div className="space-y-4">
+                {FIVE_PILLARS.map((p, i) => {
+                  const Icon = p.icon;
+                  const isExpanded = expandedPillar === p.id;
+                  return (
+                    <motion.div key={p.id} {...slideRight(pillarsAnim.visible, i * 0.1)} className="bg-white border border-gray-200 overflow-hidden">
+                      <button
+                        onClick={() => setExpandedPillar(isExpanded ? null : p.id)}
+                        className="w-full text-left p-5 sm:p-6 lg:p-8 flex items-start gap-4 sm:gap-6 hover:bg-gray-50 transition-colors"
+                      >
+                        <div className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center bg-[#8A0000]/10 shrink-0">
+                          <Icon size={22} className="text-[#8A0000]" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-baseline gap-3 mb-1">
+                            <h4 className="text-[20px] sm:text-[24px] font-bold text-[#141414]">{p.title}</h4>
+                            <span className="text-[11px] font-bold uppercase tracking-widest text-gray-400">{p.subtitle}</span>
+                          </div>
+                          <div className="flex items-baseline gap-4 mb-3">
+                            <span className="text-[28px] sm:text-[36px] font-black text-[#8A0000] leading-none">{p.pct}%</span>
+                            <span className="text-[14px] sm:text-[16px] font-bold text-gray-400">{sym}{fmtShort(p.goal)}</span>
+                          </div>
+                          {/* Mini progress bar */}
+                          <div className="h-2 bg-gray-100 w-full overflow-hidden">
+                            <motion.div className="h-full bg-[#8A0000]" initial={{ width: 0 }} whileInView={{ width: `${p.pct}%` }} transition={{ duration: 1.2, delay: i * 0.1, ease: 'easeOut' }} viewport={{ once: true }} />
+                          </div>
+                        </div>
+                        <ChevronDown size={18} className={`text-gray-400 shrink-0 mt-2 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                      </button>
+                      <AnimatePresence>
+                        {isExpanded && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="overflow-hidden"
+                          >
+                            <div className="px-5 sm:px-6 lg:px-8 pb-6 sm:pb-8 border-t border-gray-100 pt-4 sm:pt-6">
+                              <p className="text-[14px] sm:text-[15px] text-gray-600 leading-relaxed mb-4">{p.desc}</p>
+                              <div className="p-4 bg-gray-50 border-l-2 border-[#8A0000]">
+                                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#8A0000] block mb-2">How it works</span>
+                                <p className="text-[13px] text-gray-600 leading-relaxed">{p.details}</p>
+                              </div>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </motion.div>
+                  );
+                })}
               </div>
             </div>
           </div>
-
-          {/* Pull Quote — Breaking out of container slightly */}
-          <motion.div {...scaleIn(goalsAnim.visible, 0.4)} className="mt-16 sm:mt-24 lg:mt-32 relative">
-            <div className="border-l-4 border-[#8A0000] pl-5 sm:pl-8 lg:pl-12 lg:-ml-8 max-w-[900px]">
-              <svg className="w-6 h-6 sm:w-8 sm:h-8 text-[#8A0000] opacity-20 mb-4 sm:mb-6" viewBox="0 0 24 24" fill="currentColor"><path d="M4.583 17.321C3.553 16.227 3 15 3 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179zm10 0C13.553 16.227 13 15 13 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179z"/></svg>
-              <blockquote className="text-[16px] sm:text-[22px] md:text-[28px] font-light text-[#141414] leading-[1.5] mb-4 sm:mb-6 italic">
-                The function of the university is not simply to teach bread-winning, or to furnish teachers for the public schools, or to be a centre of polite society; it is, above all, to be the organ of that fine adjustment between real life and the growing knowledge of life, an adjustment which forms the secret of civilisation.
-              </blockquote>
-              <div className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#8A0000]">W.E.B. Du Bois</div>
-              <div className="text-[11px] text-gray-400 mt-1">The Talented Tenth (1903)</div>
-            </div>
-          </motion.div>
         </div>
       </section>
 
       {/* ══════════════════════════════════════════
-          4. THREE PHASES TO LAUNCH — Vertical Timeline
+          4. TIMELINE — 12-Month, 3-Phase Campaign
           ══════════════════════════════════════════ */}
       <section id="phases" className="scroll-mt-[110px] py-16 sm:py-24 lg:py-36">
         <div ref={phasesAnim.ref} className="max-w-[1400px] mx-auto w-full px-5 sm:px-8 lg:px-20">
           {/* Phase indicator */}
           <motion.div {...clipReveal(phasesAnim.visible)} className="mb-10 sm:mb-16">
             <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
-              {['I', 'II', 'III', 'IV', 'V'].map((num, i) => (
+              {['I', 'II', 'III'].map((num, i) => (
                 <React.Fragment key={i}>
                   <span className="text-[24px] sm:text-[48px] md:text-[64px] font-black text-[#8A0000] leading-none">{num}</span>
-                  {i < 4 && <ArrowRight size={14} className="text-gray-300 hidden sm:block" />}
+                  {i < 2 && <ArrowRight size={14} className="text-gray-300 hidden sm:block" />}
                 </React.Fragment>
               ))}
             </div>
             <h2 className="text-[32px] sm:text-[44px] md:text-[56px] font-black leading-[0.92] tracking-tighter text-[#141414] mb-4">
-              Five milestones<br />to launch
+              12 months.<br />Three phases.
             </h2>
-            <p className="text-[16px] text-gray-600 max-w-xl leading-relaxed">Each phase has concrete deliverables. Not aspirations &mdash; commitments. Track our progress as we climb from foundation to global scale.</p>
+            <p className="text-[16px] text-gray-600 max-w-xl leading-relaxed">A founding campaign in three acts. Each phase has concrete deliverables. Not aspirations &mdash; commitments.</p>
           </motion.div>
 
           {/* Vertical timeline */}
@@ -664,7 +714,7 @@ export default function FundraisingCampaign({ goToPage }: Props) {
                         <div className="h-2 bg-gray-200 w-full overflow-hidden mb-2">
                           <div className={`h-full transition-all duration-1000 ${ms.reached ? 'bg-[#8A0000]' : 'bg-gray-300'}`} style={{ width: ms.reached ? '100%' : `${Math.max(5, Math.min(95, (CAMPAIGN.raised / ms.target) * 100))}%` }} />
                         </div>
-                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">{ms.reached ? 'Complete' : 'In progress'}</span>
+                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">{ms.reached ? 'Complete' : 'Upcoming'}</span>
                       </div>
                     </div>
                   </motion.div>
@@ -676,18 +726,18 @@ export default function FundraisingCampaign({ goToPage }: Props) {
       </section>
 
       {/* ══════════════════════════════════════════
-          5. FOUNDING OPPORTUNITIES — Table + Constellation Strip
+          5. NAMING OPPORTUNITIES
           ══════════════════════════════════════════ */}
       <section id="opportunities" className="scroll-mt-[110px] bg-gray-50 py-16 sm:py-24 lg:py-36">
         <div ref={opportunitiesAnim.ref} className="max-w-[1400px] mx-auto w-full px-5 sm:px-8 lg:px-20">
-          {/* Intro — opens with just text, no red line label */}
+          {/* Intro */}
           <motion.h2 {...clipReveal(opportunitiesAnim.visible)} className="text-[32px] sm:text-[44px] md:text-[56px] font-black leading-[0.92] tracking-tighter text-[#141414] mb-4">
-            Founding<br />opportunities
+            Naming<br />opportunities
           </motion.h2>
-          <motion.p {...fadeUp(opportunitiesAnim.visible, 0.15)} className="text-[15px] sm:text-[16px] text-gray-600 max-w-2xl leading-relaxed mb-4">We are building the first borderless, network-native university in history. We are looking for donors and partners who share our vision and are excited about this legacy-building opportunity.</motion.p>
-          <motion.p {...fadeUp(opportunitiesAnim.visible, 0.2)} className="text-[13px] sm:text-[14px] text-gray-500 mb-10 sm:mb-16">Contact our advancement team at <a href="mailto:donate@artemis.edu" className="text-[#8A0000] font-bold hover:underline">donate@artemis.edu</a> to learn how you can become an Artemis Founder.</motion.p>
+          <motion.p {...fadeUp(opportunitiesAnim.visible, 0.15)} className="text-[15px] sm:text-[16px] text-gray-600 max-w-2xl leading-relaxed mb-4">Every gift at the naming level carries your name in perpetuity. Colleges, professorships, centers, programs, scholarships &mdash; each one a permanent mark on the university that reshapes civilisation.</motion.p>
+          <motion.p {...fadeUp(opportunitiesAnim.visible, 0.2)} className="text-[13px] sm:text-[14px] text-gray-500 mb-10 sm:mb-16">Contact our advancement team at <a href="mailto:donate@artemis.edu" className="text-[#8A0000] font-bold hover:underline">donate@artemis.edu</a> to discuss naming opportunities.</motion.p>
 
-          {/* Table-style layout — cards on mobile, table on desktop */}
+          {/* Table-style layout */}
           <motion.div {...fadeUp(opportunitiesAnim.visible, 0.25)} className="mb-12 sm:mb-20">
             {/* Desktop table */}
             <div className="hidden md:block bg-white border border-gray-200 overflow-hidden">
@@ -698,7 +748,7 @@ export default function FundraisingCampaign({ goToPage }: Props) {
                 <div className="col-span-5 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 text-right">Amount</div>
               </div>
               {/* Table rows */}
-              {FOUNDING_OPPORTUNITIES.map((opp, i) => {
+              {NAMING_OPPORTUNITIES.map((opp, i) => {
                 const Icon = opp.icon;
                 return (
                   <motion.div
@@ -715,10 +765,11 @@ export default function FundraisingCampaign({ goToPage }: Props) {
                     </div>
                     <div className="col-span-5">
                       <h4 className="text-[15px] font-bold text-[#141414] group-hover:text-[#8A0000] transition-colors">{opp.title}</h4>
+                      <p className="text-[12px] text-gray-500 mt-0.5 leading-snug hidden lg:block">{opp.desc}</p>
                     </div>
                     <div className="col-span-5 text-right">
-                      <div className="text-[20px] font-black text-[#8A0000] leading-none">{opp.range || `${sym}${fmtShort(opp.amount)}`}</div>
-                      <span className="text-[10px] text-gray-400">{opp.type === 'Naming' ? 'Naming opportunity' : opp.type === 'Endowment' ? 'Per named chair' : 'Naming opportunity'}</span>
+                      <div className="text-[20px] font-black text-[#8A0000] leading-none">{sym}{fmtShort(opp.amount)}</div>
+                      <span className="text-[10px] text-gray-400">{opp.type === 'College' ? 'Per College' : opp.type === 'Central Node' ? 'Per Node' : opp.type === 'Endowment' ? 'Per Chair' : opp.type === 'Scholarship' ? '4-year fund' : 'Naming'}</span>
                     </div>
                   </motion.div>
                 );
@@ -727,7 +778,7 @@ export default function FundraisingCampaign({ goToPage }: Props) {
 
             {/* Mobile cards */}
             <div className="md:hidden space-y-3">
-              {FOUNDING_OPPORTUNITIES.map((opp, i) => {
+              {NAMING_OPPORTUNITIES.map((opp, i) => {
                 const Icon = opp.icon;
                 return (
                   <motion.div
@@ -742,10 +793,10 @@ export default function FundraisingCampaign({ goToPage }: Props) {
                       <Icon size={14} className="text-[#8A0000]" />
                       <span className="text-[9px] font-bold uppercase tracking-widest text-[#8A0000]">{opp.type}</span>
                     </div>
-                    <h4 className="text-[15px] font-bold text-[#141414] mb-2">{opp.title}</h4>
+                    <h4 className="text-[15px] font-bold text-[#141414] mb-1">{opp.title}</h4>
+                    <p className="text-[12px] text-gray-500 leading-snug mb-2">{opp.desc}</p>
                     <div className="flex items-baseline justify-between">
-                      <div className="text-[20px] font-black text-[#8A0000] leading-none">{opp.range || `${sym}${fmtShort(opp.amount)}`}</div>
-                      <span className="text-[10px] text-gray-400">{opp.type === 'Naming' ? 'Naming opportunity' : opp.type === 'Endowment' ? 'Per named chair' : 'Naming opportunity'}</span>
+                      <div className="text-[20px] font-black text-[#8A0000] leading-none">{sym}{fmtShort(opp.amount)}</div>
                     </div>
                   </motion.div>
                 );
@@ -753,170 +804,138 @@ export default function FundraisingCampaign({ goToPage }: Props) {
             </div>
           </motion.div>
 
-          {/* Constellations — Circular universe in motion */}
+          {/* Donor Segments */}
           <motion.div {...clipReveal(opportunitiesAnim.visible)}>
-            <div className="flex items-center gap-4 mb-2">
-              <h3 className="text-[28px] font-bold text-[#141414]">The Constellation</h3>
-              <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#8A0000]">8 Stars</span>
-            </div>
-            <p className="text-[14px] text-gray-500 mb-10">Every contribution places a star in the founding constellation. The greater the gift, the brighter the star. Click a star to explore its orbit.</p>
-
-            <div className="flex flex-col lg:flex-row gap-10 items-center lg:items-start">
-              {/* Circular constellation universe */}
-              <div className="relative w-[280px] h-[280px] sm:w-[340px] sm:h-[340px] md:w-[420px] md:h-[420px] shrink-0 mx-auto lg:mx-0">
-                {/* Outer rotating ring — slow drift */}
+            <h3 className="text-[24px] sm:text-[28px] font-bold text-[#141414] mb-6">How the campaign breaks down</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {DONOR_SEGMENTS.map((seg, i) => (
                 <motion.div
-                  className="absolute inset-0 rounded-full border border-gray-200"
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 120, repeat: Infinity, ease: 'linear' }}
-                />
-                {/* Mid rotating ring — opposite direction */}
-                <motion.div
-                  className="absolute inset-6 rounded-full border border-dashed border-gray-200"
-                  animate={{ rotate: -360 }}
-                  transition={{ duration: 90, repeat: Infinity, ease: 'linear' }}
-                />
-                {/* Inner rotating ring */}
-                <motion.div
-                  className="absolute inset-12 rounded-full border border-gray-100"
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 60, repeat: Infinity, ease: 'linear' }}
-                />
-                {/* Center glow */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-16 h-16 rounded-full bg-[#8A0000]/5 flex items-center justify-center">
-                    <Orbit size={20} className="text-[#8A0000]/40" />
+                  key={i}
+                  {...fadeUp(opportunitiesAnim.visible, i * 0.1)}
+                  className="bg-white border border-gray-200 p-5 sm:p-6"
+                >
+                  <div className="flex items-baseline justify-between mb-3">
+                    <h4 className="text-[16px] font-bold text-[#141414]">{seg.segment}</h4>
+                    <span className="text-[28px] font-black text-[#8A0000] leading-none">{seg.pct}%</span>
                   </div>
-                </div>
-                {/* Faint radial lines from center */}
-                {[0, 45, 90, 135, 180, 225, 270, 315].map((angle) => (
-                  <div
-                    key={angle}
-                    className="absolute top-1/2 left-1/2 w-[1px] bg-gray-100 origin-top"
-                    style={{ height: '46%', transform: `translate(-50%, 0) rotate(${angle}deg)` }}
-                  />
-                ))}
-
-                {/* Constellation nodes — positioned in orbit */}
-                {CONSTELLATIONS.map((c, i) => {
-                  const Icon = c.icon;
-                  const isSelected = selectedPerk === c.id;
-                  const angle = (i / CONSTELLATIONS.length) * 2 * Math.PI - Math.PI / 2;
-                  const orbitPct = 30 + c.magnitude * 3.5; // % from center
-                  const offsetX = Math.cos(angle) * orbitPct;
-                  const offsetY = Math.sin(angle) * orbitPct;
-                  const size = 28 + c.magnitude * 5; // circle size grows with magnitude
-                  return (
-                    <motion.button
-                      key={c.id}
-                      className="absolute z-10"
-                      style={{
-                        top: `calc(50% + ${offsetY}% - ${size / 2}px)`,
-                        left: `calc(50% + ${offsetX}% - ${size / 2}px)`,
-                      }}
-                      initial={{ opacity: 0, scale: 0 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 0.3 + i * 0.1, duration: 0.5, type: 'spring', stiffness: 200 }}
-                      viewport={{ once: true }}
-                      onClick={() => { setSelectedPerk(isSelected ? null : c.id); if (!isSelected) { setSelectedAmount(c.min); setCustomAmount(''); } }}
-                    >
-                      {/* Glow behind selected */}
-                      {isSelected && (
-                        <motion.div
-                          className="absolute rounded-full bg-[#8A0000]/10"
-                          animate={{ scale: [1, 1.5, 1], opacity: [0.6, 0.2, 0.6] }}
-                          transition={{ duration: 2, repeat: Infinity }}
-                          style={{ inset: '-30%' }}
-                        />
-                      )}
-                      <div
-                        className={`rounded-full flex items-center justify-center transition-all cursor-pointer border-2 ${
-                          isSelected
-                            ? 'bg-[#8A0000] border-[#8A0000] shadow-[0_0_20px_rgba(138,0,0,0.3)]'
-                            : 'bg-white border-gray-200 hover:border-[#8A0000]/50 hover:shadow-md'
-                        }`}
-                        style={{ width: size, height: size }}
-                      >
-                        <Icon
-                          size={Math.max(12, size * 0.35)}
-                          className={isSelected ? 'text-white' : 'text-[#8A0000]'}
-                        />
-                      </div>
-                      {/* Label below circle */}
-                      <div className="absolute left-1/2 -translate-x-1/2 top-full mt-1 whitespace-nowrap">
-                        <span className={`text-[9px] font-bold uppercase tracking-wider ${isSelected ? 'text-[#8A0000]' : 'text-gray-400'}`}>{c.title}</span>
-                      </div>
-                    </motion.button>
-                  );
-                })}
-              </div>
-
-              {/* Detail panel — right side */}
-              <div className="flex-1 w-full min-h-[240px]">
-                <AnimatePresence mode="wait">
-                  {selectedPerk ? (() => {
-                    const c = CONSTELLATIONS.find(x => x.id === selectedPerk);
-                    if (!c) return null;
-                    const Icon = c.icon;
-                    return (
-                      <motion.div
-                        key={c.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.35 }}
-                        className="bg-white border-2 border-[#8A0000]/20 p-5 sm:p-8 lg:p-10"
-                      >
-                        <div className="flex items-center gap-3 mb-4">
-                          <div className="w-10 h-10 rounded-full bg-[#8A0000] flex items-center justify-center">
-                            <Icon size={18} className="text-white" />
-                          </div>
-                          <div>
-                            <h3 className="text-[24px] font-extrabold text-[#141414]">{c.title}</h3>
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Magnitude {c.magnitude} of 8</span>
-                          </div>
-                        </div>
-                        <p className="text-[15px] text-gray-600 leading-relaxed mb-6">{c.desc}</p>
-                        <div className="flex items-baseline gap-3 mb-6">
-                          <span className="text-[10px] font-bold uppercase tracking-widest text-[#8A0000]">From</span>
-                          <span className="text-[36px] font-black text-[#141414] leading-none">{sym}{fmtShort(c.min)}</span>
-                        </div>
-                        {/* Magnitude dots */}
-                        <div className="flex gap-1.5 mb-6">
-                          {Array.from({ length: 8 }).map((_, j) => (
-                            <div key={j} className={`w-2.5 h-2.5 rounded-full transition-colors ${j < c.magnitude ? 'bg-[#8A0000]' : 'bg-gray-200'}`} />
-                          ))}
-                        </div>
-                        <button onClick={() => document.getElementById('give')?.scrollIntoView({ behavior: 'smooth' })} className="flex items-center space-x-3 px-8 py-3 bg-[#8A0000] text-white text-[11px] font-bold uppercase tracking-widest hover:bg-[#6B0000] transition-colors group">
-                          <span>Claim This Star</span><ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                        </button>
-                      </motion.div>
-                    );
-                  })() : (
-                    <motion.div
-                      key="empty"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="bg-white border border-gray-200 p-5 sm:p-8 flex flex-col items-center justify-center text-center min-h-[240px]"
-                    >
-                      <div className="w-16 h-16 rounded-full bg-gray-50 flex items-center justify-center mb-4">
-                        <Orbit size={24} className="text-gray-300" />
-                      </div>
-                      <p className="text-[15px] text-gray-400 leading-relaxed">Select a star in the constellation to explore its orbit and discover the perks that await.</p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+                  <div className="flex items-center gap-4 mb-3">
+                    <span className="text-[12px] font-bold text-gray-500 uppercase tracking-widest">{seg.count}</span>
+                    <span className="text-[14px] font-bold text-[#141414]">{seg.target}</span>
+                  </div>
+                  <div className="h-2 bg-gray-100 w-full overflow-hidden mb-3">
+                    <motion.div className="h-full bg-[#8A0000]" initial={{ width: 0 }} whileInView={{ width: `${seg.pct}%` }} transition={{ duration: 1, delay: i * 0.15, ease: 'easeOut' }} viewport={{ once: true }} />
+                  </div>
+                  <p className="text-[12px] text-gray-500 leading-relaxed">{seg.desc}</p>
+                </motion.div>
+              ))}
             </div>
           </motion.div>
         </div>
       </section>
 
       {/* ══════════════════════════════════════════
-          6. WAYS TO GIVE — Icon Grid
+          6. GIVING CIRCLES
           ══════════════════════════════════════════ */}
-      <section id="ways" className="scroll-mt-[110px] py-16 sm:py-24 lg:py-36">
+      <section id="circles" className="scroll-mt-[110px] py-16 sm:py-24 lg:py-36">
+        <div ref={circlesAnim.ref} className="max-w-[1400px] mx-auto w-full px-5 sm:px-8 lg:px-20">
+          {/* Tier legend horizontal bar */}
+          <motion.div {...clipReveal(circlesAnim.visible)} className="mb-10 sm:mb-16">
+            <h2 className="text-[32px] sm:text-[44px] md:text-[56px] font-black leading-[0.92] tracking-tighter text-[#141414] mb-6 sm:mb-8">Giving circles</h2>
+            <div className="flex flex-wrap gap-6 lg:gap-12 pb-8 border-b border-gray-200">
+              {GIVING_CIRCLES.map((t, i) => {
+                const TIcon = t.icon;
+                return (
+                  <div key={i} className="flex items-center gap-3">
+                    <TIcon size={18} style={{ color: t.color }} />
+                    <div>
+                      <div className="text-[13px] font-bold text-[#141414]">{t.name}</div>
+                      <div className="text-[11px] text-gray-400">{t.range}</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </motion.div>
+
+          {/* Giving Circles expandable cards */}
+          <div className="space-y-4 mb-16 sm:mb-24">
+            {GIVING_CIRCLES.map((gc, i) => {
+              const GCIcon = gc.icon;
+              const isExpanded = expandedCircle === gc.name;
+              return (
+                <motion.div key={gc.name} {...fadeUp(circlesAnim.visible, i * 0.08)} className="border border-gray-200 overflow-hidden">
+                  <button
+                    onClick={() => setExpandedCircle(isExpanded ? null : gc.name)}
+                    className="w-full text-left p-5 sm:p-6 lg:p-8 flex items-center gap-4 sm:gap-6 hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center shrink-0" style={{ backgroundColor: gc.color + '15' }}>
+                      <GCIcon size={22} style={{ color: gc.color }} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-[18px] sm:text-[22px] font-bold text-[#141414]">{gc.name}</h4>
+                      <span className="text-[13px] text-gray-500">{gc.range}</span>
+                    </div>
+                    <ChevronDown size={18} className={`text-gray-400 shrink-0 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                  </button>
+                  <AnimatePresence>
+                    {isExpanded && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="px-5 sm:px-6 lg:px-8 pb-6 sm:pb-8 border-t border-gray-100 pt-4 sm:pt-6">
+                          <ul className="space-y-3">
+                            {gc.benefits.map((b, j) => (
+                              <li key={j} className="flex items-start gap-3">
+                                <Check size={14} className="mt-0.5 shrink-0" style={{ color: gc.color }} />
+                                <span className="text-[14px] text-gray-600 leading-relaxed">{b}</span>
+                              </li>
+                            ))}
+                          </ul>
+                          <button onClick={() => document.getElementById('give')?.scrollIntoView({ behavior: 'smooth' })} className="flex items-center space-x-3 mt-6 px-6 py-3 bg-[#8A0000] text-white text-[10px] font-bold uppercase tracking-widest hover:bg-[#6B0000] transition-colors group">
+                            <span>Join This Circle</span><ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          {/* Recent Donors Wall */}
+          <div>
+            <h3 className="text-[22px] sm:text-[28px] font-bold text-[#141414] mb-6 sm:mb-8">Recent donors</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {DONORS.map((d, i) => (
+                <motion.div key={i} {...fadeUp(circlesAnim.visible, i * 0.03)} className="flex items-start gap-3 p-4 bg-gray-50 hover:bg-white hover:border-gray-300 border border-gray-100 transition-colors">
+                  <div className="shrink-0 w-9 h-9 flex items-center justify-center text-[13px] font-bold" style={{ backgroundColor: TIER_COLORS[d.tier] + '15', color: TIER_COLORS[d.tier] }}>{d.name.charAt(0)}</div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[13px] font-bold text-[#141414] truncate">{d.name}</span>
+                      <span className="text-[9px] font-bold uppercase tracking-widest px-1.5 py-0.5 shrink-0" style={{ color: TIER_COLORS[d.tier], backgroundColor: TIER_COLORS[d.tier] + '10' }}>{TIER_LABELS[d.tier]}</span>
+                    </div>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="text-[12px] font-bold text-[#8A0000]">{sym}{fmtShort(d.amount)}</span>
+                      <span className="text-[10px] text-gray-400">{d.date}</span>
+                    </div>
+                    {d.msg && <p className="text-[11px] text-gray-400 mt-1 italic truncate">&ldquo;{d.msg}&rdquo;</p>}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
+          7. WAYS TO GIVE — Icon Grid
+          ══════════════════════════════════════════ */}
+      <section id="ways" className="scroll-mt-[110px] bg-gray-50 py-16 sm:py-24 lg:py-36">
         <div ref={waysAnim.ref} className="max-w-[1400px] mx-auto w-full px-5 sm:px-8 lg:px-20">
           <motion.h2 {...clipReveal(waysAnim.visible)} className="text-[32px] sm:text-[44px] md:text-[56px] font-black leading-[0.92] tracking-tighter text-[#141414] mb-8 sm:mb-12">
             Ways to give
@@ -961,9 +980,9 @@ export default function FundraisingCampaign({ goToPage }: Props) {
       </section>
 
       {/* ══════════════════════════════════════════
-          7. GIVE NOW — The Donation Form
+          8. GIVE NOW — The Donation Form
           ══════════════════════════════════════════ */}
-      <section id="give" className="scroll-mt-[110px] bg-gray-50 py-16 sm:py-24 lg:py-36">
+      <section id="give" className="scroll-mt-[110px] bg-white py-16 sm:py-24 lg:py-36">
         <div ref={giveAnim.ref} className="max-w-[1400px] mx-auto w-full px-5 sm:px-8 lg:px-20">
           <motion.h2 {...clipReveal(giveAnim.visible)} className="text-[32px] sm:text-[44px] md:text-[56px] font-black leading-[0.92] tracking-tighter text-[#141414] mb-4">
             Give now
@@ -971,7 +990,7 @@ export default function FundraisingCampaign({ goToPage }: Props) {
           <motion.p {...fadeUp(giveAnim.visible, 0.1)} className="text-[14px] sm:text-[16px] text-gray-600 max-w-2xl leading-relaxed mb-8 sm:mb-12">Choose your amount, select your payment method, and join the founding. For major gifts and naming opportunities, contact <a href="mailto:donate@artemis.edu" className="text-[#8A0000] font-bold hover:underline">donate@artemis.edu</a>.</motion.p>
 
           {/* AMOUNT section — Full-width */}
-          <motion.div {...fadeUp(giveAnim.visible, 0.15)} className="bg-white border border-gray-200 p-5 sm:p-8 lg:p-10 mb-6">
+          <motion.div {...fadeUp(giveAnim.visible, 0.15)} className="bg-gray-50 border border-gray-200 p-5 sm:p-8 lg:p-10 mb-6">
             <h3 className="text-[11px] font-bold uppercase tracking-widest text-gray-900 mb-5">Select your amount</h3>
             <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 mb-5">
               {PRESETS.map(amt => (
@@ -985,17 +1004,20 @@ export default function FundraisingCampaign({ goToPage }: Props) {
               <input type="number" value={customAmount} onChange={(e) => { setCustomAmount(e.target.value); setSelectedAmount(null); }} placeholder="Custom amount" className="w-full pl-8 pr-4 py-3 bg-white border-2 border-gray-200 focus:border-[#8A0000] focus:outline-none text-[16px] font-bold text-[#141414] placeholder:text-gray-300" />
             </div>
             {effectiveAmount > 0 && (
-              <div className="mt-5 p-4 bg-gray-50 border border-gray-100">
+              <div className="mt-5 p-4 bg-white border border-gray-100">
                 <div className="flex items-center gap-2">
                   <Heart size={14} className="text-[#8A0000]" />
                   <span className="text-[13px] text-gray-600">
-                    {effectiveAmount >= 500000 && 'Patron of an entire Artemis node. The building bears your name.'}
-                    {effectiveAmount >= 50000 && effectiveAmount < 500000 && 'Names a Living Commons. Your name becomes part of daily life at Artemis.'}
-                    {effectiveAmount >= 10000 && effectiveAmount < 50000 && 'Names a research lab in perpetuity. A permanent dedication.'}
-                    {effectiveAmount >= 2500 && effectiveAmount < 10000 && 'Funds a named micro-scholarship for one student.'}
-                    {effectiveAmount >= 500 && effectiveAmount < 2500 && 'Sponsors a student\'s travel to an Artemis node.'}
-                    {effectiveAmount >= 100 && effectiveAmount < 500 && 'Funds one week of digital infrastructure.'}
-                    {effectiveAmount > 0 && effectiveAmount < 100 && 'Every star counts in the founding constellation.'}
+                    {effectiveAmount >= 25_000_000 && 'Name a Central Node — Venice, San Francisco, or Singapore.'}
+                    {effectiveAmount >= 10_000_000 && effectiveAmount < 25_000_000 && 'Name a Tier A College or Center of Inquiry.'}
+                    {effectiveAmount >= 5_000_000 && effectiveAmount < 10_000_000 && "Guardians' Circle — Name a Tier B College or Distinguished Professorship."}
+                    {effectiveAmount >= 2_000_000 && effectiveAmount < 5_000_000 && 'Name a Tier C College.'}
+                    {effectiveAmount >= 1_000_000 && effectiveAmount < 2_000_000 && "Builders' Circle — Name a Professorship or major program."}
+                    {effectiveAmount >= 100_000 && effectiveAmount < 1_000_000 && "Fellows' Circle — Named scholarship fund or tutorial room."}
+                    {effectiveAmount >= 12_000 && effectiveAmount < 100_000 && "Fund a student's full scholarship for four years."}
+                    {effectiveAmount >= 10_000 && effectiveAmount < 12_000 && 'Friends of Artemis — Name in the founding Donor Roll.'}
+                    {effectiveAmount >= 99 && effectiveAmount < 10_000 && 'The 99 — Waitlist priority for enrollment.'}
+                    {effectiveAmount > 0 && effectiveAmount < 99 && 'Every contribution counts in the founding of a university.'}
                   </span>
                 </div>
               </div>
@@ -1026,7 +1048,7 @@ export default function FundraisingCampaign({ goToPage }: Props) {
           {/* SPLIT: Donor details LEFT, Payment + summary RIGHT */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* LEFT — Donor info */}
-            <motion.div {...slideLeft(giveAnim.visible, 0.2)} className="bg-white border border-gray-200 p-5 sm:p-8 lg:p-10 space-y-5">
+            <motion.div {...slideLeft(giveAnim.visible, 0.2)} className="bg-gray-50 border border-gray-200 p-5 sm:p-8 lg:p-10 space-y-5">
               <h3 className="text-[11px] font-bold uppercase tracking-widest text-gray-900 mb-2">Your Details</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -1051,7 +1073,7 @@ export default function FundraisingCampaign({ goToPage }: Props) {
             </motion.div>
 
             {/* RIGHT — Payment method */}
-            <motion.div {...slideRight(giveAnim.visible, 0.2)} className="bg-white border border-gray-200 p-5 sm:p-8 lg:p-10">
+            <motion.div {...slideRight(giveAnim.visible, 0.2)} className="bg-gray-50 border border-gray-200 p-5 sm:p-8 lg:p-10">
               <h3 className="text-[11px] font-bold uppercase tracking-widest text-gray-900 mb-5">Payment method</h3>
               <div className="grid grid-cols-2 gap-3 mb-6">
                 {[
@@ -1068,7 +1090,7 @@ export default function FundraisingCampaign({ goToPage }: Props) {
               </div>
 
               {paymentMethod === 'crypto' && (
-                <div className="mb-6 p-5 bg-gray-50 border border-gray-100">
+                <div className="mb-6 p-5 bg-white border border-gray-100">
                   <div className="flex items-center gap-3 mb-4"><Bitcoin size={18} className="text-[#8A0000]" /><span className="text-[14px] font-bold text-[#141414]">Cryptocurrency</span></div>
                   <div className="flex gap-2 mb-4">
                     {(['BTC', 'ETH'] as const).map(coin => (
@@ -1076,15 +1098,15 @@ export default function FundraisingCampaign({ goToPage }: Props) {
                     ))}
                   </div>
                   <div className="flex items-center gap-2">
-                    <code className="text-[12px] text-gray-600 bg-white px-3 py-2 flex-1 break-all font-mono border border-gray-100">{CRYPTO[cryptoCoin]}</code>
+                    <code className="text-[12px] text-gray-600 bg-gray-50 px-3 py-2 flex-1 break-all font-mono border border-gray-100">{CRYPTO[cryptoCoin]}</code>
                     <button onClick={() => navigator.clipboard?.writeText(CRYPTO[cryptoCoin])} className="px-3 py-2 bg-gray-100 text-gray-600 text-[9px] font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors">Copy</button>
                   </div>
-                  <p className="text-[12px] text-gray-400 mt-3">After sending, email crypto@artemis.edu with your transaction hash to receive your constellation perk.</p>
+                  <p className="text-[12px] text-gray-400 mt-3">After sending, email crypto@artemis.edu with your transaction hash.</p>
                 </div>
               )}
 
               {paymentMethod === 'bank' && (
-                <div className="mb-6 p-5 bg-gray-50 border border-gray-100">
+                <div className="mb-6 p-5 bg-white border border-gray-100">
                   <div className="flex items-center gap-3 mb-4"><Banknote size={18} className="text-[#8A0000]" /><span className="text-[14px] font-bold text-[#141414]">Bank Transfer</span></div>
                   <div className="space-y-0">
                     {[['Account', 'Artemis University Founding Fund'],['Sort Code', '20-45-78'],['Account No', '73128945'],['IBAN', 'GB29 BARC 2045 7873 1289 45'],['Reference', 'ARTEMIS-FOUNDING']].map(([label, value], i) => (
@@ -1112,7 +1134,20 @@ export default function FundraisingCampaign({ goToPage }: Props) {
                   {isRecurring && <div className="text-[12px] text-[#8A0000] font-bold mt-1">{recurringFreq} &middot; {sym}{fmtShort(effectiveAmount * (recurringFreq === 'monthly' ? 12 : recurringFreq === 'quarterly' ? 4 : 1))}/yr</div>}
                 </div>
               </div>
-              {selectedPerk && (() => { const c = CONSTELLATIONS.find(x => x.id === selectedPerk); if (!c) return null; const Icon = c.icon; return (<div className="p-4 bg-[#8A0000]/5 border border-[#8A0000]/20"><span className="text-[10px] font-bold uppercase tracking-widest text-[#8A0000]">Your Constellation</span><div className="flex items-center gap-2 mt-1"><Icon size={14} className="text-[#8A0000]" /><span className="text-[14px] font-bold text-[#141414]">{c.title}</span></div></div>); })()}
+              {effectiveAmount > 0 && (() => {
+                const circle = getGivingCircle(effectiveAmount);
+                if (!circle) return null;
+                const CircleIcon = circle.icon;
+                return (
+                  <div className="p-4 border" style={{ backgroundColor: circle.color + '08', borderColor: circle.color + '30' }}>
+                    <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: circle.color }}>Your Circle</span>
+                    <div className="flex items-center gap-2 mt-1">
+                      <CircleIcon size={14} style={{ color: circle.color }} />
+                      <span className="text-[14px] font-bold text-[#141414]">{circle.name}</span>
+                    </div>
+                  </div>
+                );
+              })()}
               <button onClick={handleDonate} disabled={submitting || !donorEmail || effectiveAmount <= 0} className={`w-full lg:w-auto px-8 sm:px-12 py-4 text-[12px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-all ${submitting || !donorEmail || effectiveAmount <= 0 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-[#8A0000] text-white hover:bg-[#6B0000]'}`}>
                 {submitting ? 'Processing...' : 'Complete Donation'} {!submitting && <ArrowRight size={14} />}
               </button>
@@ -1133,120 +1168,117 @@ export default function FundraisingCampaign({ goToPage }: Props) {
       </section>
 
       {/* ══════════════════════════════════════════
-          8. THE FOUNDERS — Donor Wall + Events
+          9. THE MATH — Financial Model & Leverage
           ══════════════════════════════════════════ */}
-      <section id="founders" className="scroll-mt-[110px] py-16 sm:py-24 lg:py-36">
-        <div ref={foundersAnim.ref} className="max-w-[1400px] mx-auto w-full px-5 sm:px-8 lg:px-20">
-          {/* Tier legend horizontal bar */}
-          <motion.div {...clipReveal(foundersAnim.visible)} className="mb-10 sm:mb-16">
-            <h2 className="text-[32px] sm:text-[44px] md:text-[56px] font-black leading-[0.92] tracking-tighter text-[#141414] mb-6 sm:mb-8">The founders</h2>
-            <div className="flex flex-wrap gap-6 lg:gap-12 pb-8 border-b border-gray-200">
-              {[
-                { name: "Chancellor's Circle", range: '$500K+', icon: Crown, color: '#8A0000' },
-                { name: "Founder's Society", range: '$50K\u2013$500K', icon: Star, color: '#4338ca' },
-                { name: 'Guild Partners', range: '$5K\u2013$50K', icon: Trophy, color: '#0e7490' },
-                { name: 'Community', range: 'Up to $5K', icon: Heart, color: '#15803d' },
-              ].map((t, i) => {
-                const TIcon = t.icon;
-                return (
-                  <div key={i} className="flex items-center gap-3">
-                    <TIcon size={18} style={{ color: t.color }} />
-                    <div>
-                      <div className="text-[13px] font-bold text-[#141414]">{t.name}</div>
-                      <div className="text-[11px] text-gray-400">{t.range}</div>
-                    </div>
+      <section id="model" className="scroll-mt-[110px] bg-gray-50 py-16 sm:py-24 lg:py-36">
+        <div ref={modelAnim.ref} className="max-w-[1400px] mx-auto w-full px-5 sm:px-8 lg:px-20">
+          <motion.h2 {...clipReveal(modelAnim.visible)} className="text-[32px] sm:text-[44px] md:text-[56px] font-black leading-[0.92] tracking-tighter text-[#141414] mb-4">
+            The math<br />on one page
+          </motion.h2>
+          <motion.p {...fadeUp(modelAnim.visible, 0.15)} className="text-[16px] text-gray-600 max-w-2xl leading-relaxed mb-10 sm:mb-16">$100M campaign &rarr; $300M/yr recurring revenue &rarr; $1.5B 5-year surplus. Every campaign dollar unlocks $15 in 5-year surplus.</motion.p>
+
+          {/* Financial Model Table */}
+          <motion.div {...fadeUp(modelAnim.visible, 0.25)} className="mb-12 sm:mb-20">
+            <div className="bg-white border border-gray-200 overflow-hidden">
+              {/* Header */}
+              <div className="grid grid-cols-12 gap-4 px-4 sm:px-6 py-4 border-b border-gray-200 bg-white">
+                <div className="col-span-6 sm:col-span-7 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">Category</div>
+                <div className="col-span-3 sm:col-span-3 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 text-right">Amount</div>
+                <div className="col-span-3 sm:col-span-2 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 text-right">Share</div>
+              </div>
+              {/* Rows */}
+              {PILLAR_FINANCIAL_MODEL.map((row, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  transition={{ delay: i * 0.05, duration: 0.4 }}
+                  viewport={{ once: true }}
+                  className="grid grid-cols-12 gap-4 px-4 sm:px-6 py-4 border-b border-gray-100 last:border-0 hover:bg-gray-50 transition-colors items-center"
+                >
+                  <div className="col-span-6 sm:col-span-7">
+                    <h4 className="text-[13px] sm:text-[14px] font-bold text-[#141414]">{row.category}</h4>
+                    <p className="text-[11px] sm:text-[12px] text-gray-500 leading-snug mt-0.5 hidden sm:block">{row.desc}</p>
                   </div>
-                );
-              })}
+                  <div className="col-span-3 sm:col-span-3 text-right">
+                    <span className="text-[16px] sm:text-[18px] font-black text-[#8A0000] leading-none">{sym}{fmtShort(row.amount)}</span>
+                  </div>
+                  <div className="col-span-3 sm:col-span-2 text-right">
+                    <span className="text-[14px] sm:text-[16px] font-black text-gray-400 leading-none">{row.pct}%</span>
+                  </div>
+                </motion.div>
+              ))}
+              {/* Total row */}
+              <div className="grid grid-cols-12 gap-4 px-4 sm:px-6 py-5 bg-gray-50">
+                <div className="col-span-6 sm:col-span-7 text-[12px] sm:text-[14px] font-black uppercase tracking-widest text-[#141414]">Total</div>
+                <div className="col-span-3 sm:col-span-3 text-right text-[18px] sm:text-[22px] font-black text-[#8A0000]">{sym}{fmtShort(CAMPAIGN.goal)}</div>
+                <div className="col-span-3 sm:col-span-2 text-right text-[14px] sm:text-[16px] font-black text-gray-400">100%</div>
+              </div>
             </div>
           </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-            {/* LEFT — Donor wall (wider) */}
-            <div className="lg:col-span-8">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {DONORS.map((d, i) => (
-                  <motion.div key={i} {...fadeUp(foundersAnim.visible, i * 0.04)} className="flex items-start gap-3 p-4 bg-gray-50 hover:bg-white hover:border-gray-300 border border-gray-100 transition-colors">
-                    <div className="shrink-0 w-9 h-9 flex items-center justify-center text-[13px] font-bold" style={{ backgroundColor: TIER_COLORS[d.tier] + '15', color: TIER_COLORS[d.tier] }}>{d.name.charAt(0)}</div>
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[13px] font-bold text-[#141414] truncate">{d.name}</span>
-                        <span className="text-[9px] font-bold uppercase tracking-widest px-1.5 py-0.5 shrink-0" style={{ color: TIER_COLORS[d.tier], backgroundColor: TIER_COLORS[d.tier] + '10' }}>{TIER_LABELS[d.tier]}</span>
-                      </div>
-                      <div className="flex items-center gap-2 mt-0.5">
-                        <span className="text-[12px] font-bold text-[#8A0000]">{sym}{fmtShort(d.amount)}</span>
-                        <span className="text-[10px] text-gray-400">{d.date}</span>
-                      </div>
-                      {d.msg && <p className="text-[11px] text-gray-400 mt-1 italic truncate">&ldquo;{d.msg}&rdquo;</p>}
-                    </div>
-                  </motion.div>
-                ))}
+          {/* Leverage Stats */}
+          <motion.div {...scaleIn(modelAnim.visible, 0.3)} className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-12 sm:mb-20">
+            {[
+              { label: 'Campaign', value: `${sym}100M`, desc: 'One-time founding investment' },
+              { label: 'Annual Revenue', value: `${sym}300M`, desc: 'Recurring from Year 1 tuition' },
+              { label: '5-Year Surplus', value: `${sym}1.5B`, desc: 'Every campaign dollar unlocks $15' },
+            ].map((stat, i) => (
+              <div key={i} className="bg-white border border-gray-200 p-5 sm:p-8 text-center">
+                <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#8A0000] mb-3">{stat.label}</div>
+                <div className="text-[32px] sm:text-[44px] font-black text-[#141414] leading-none tracking-tighter mb-2">{stat.value}</div>
+                <p className="text-[13px] text-gray-500">{stat.desc}</p>
               </div>
-            </div>
+            ))}
+          </motion.div>
 
-            {/* RIGHT — Upcoming events */}
-            <div className="lg:col-span-4">
-              <div className="lg:sticky lg:top-[180px]">
-                <h3 className="text-[18px] font-bold text-[#141414] mb-6">Upcoming Events</h3>
-                <div className="space-y-0">
-                  {EVENTS.map((ev, i) => {
-                    const Icon = ev.icon;
-                    const dateParts = ev.date.split(' ');
-                    return (
-                      <motion.div key={i} {...fadeUp(foundersAnim.visible, i * 0.08)} className="group flex items-start gap-4 py-4 border-b border-gray-100 last:border-0 hover:border-[#8A0000] transition-colors cursor-default">
-                        <div className="shrink-0 w-[48px] text-center pt-0.5">
-                          <div className="text-[10px] font-bold uppercase tracking-widest text-[#8A0000] mb-0.5">{ev.weekday}</div>
-                          <div className="text-[18px] font-black text-[#141414] leading-none tabular-nums">{dateParts[0]}</div>
-                          <div className="text-[10px] text-gray-400 uppercase">{dateParts[1]}</div>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-0.5">
-                            <span className="text-[9px] font-bold uppercase tracking-widest text-[#8A0000]">{ev.type}</span>
-                            {ev.virtual && <span className="text-[8px] font-bold uppercase tracking-widest px-1.5 py-0.5 bg-gray-100 text-gray-500">Virtual</span>}
-                          </div>
-                          <h4 className="text-[14px] font-bold text-[#141414] group-hover:text-[#8A0000] transition-colors leading-tight mb-0.5">{ev.title}</h4>
-                          <div className="flex items-center gap-3 text-[11px] text-gray-400">
-                            <span className="flex items-center gap-1"><MapPin size={9} />{ev.location}</span>
-                            {ev.price !== null && ev.price > 0 && <span>{sym}{ev.price}</span>}
-                            {ev.price === 0 && <span className="text-[#8A0000] font-bold">Free</span>}
-                          </div>
-                          {ev.capacity && (
-                            <div className="mt-1.5">
-                              <div className="h-1 bg-gray-200 w-24"><div className="h-full bg-[#8A0000]/60" style={{ width: `${(ev.registered / ev.capacity) * 100}%` }} /></div>
-                              <span className="text-[9px] text-gray-400 mt-0.5 block">{ev.registered}/{ev.capacity}</span>
-                            </div>
-                          )}
-                        </div>
-                      </motion.div>
-                    );
-                  })}
+          {/* After Year 1 */}
+          <motion.div {...fadeUp(modelAnim.visible, 0.4)} className="border-l-4 border-[#8A0000] pl-5 sm:pl-8 lg:pl-12 max-w-[900px]">
+            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#8A0000] block mb-4">After Year 1</span>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 mb-6">
+              {[
+                { value: '100,000', label: 'Students Enrolled' },
+                { value: `${sym}300M`, label: 'Tuition Revenue' },
+                { value: '12.4%', label: 'OPEX Ratio' },
+                { value: `${sym}262M`, label: 'Annual Surplus' },
+              ].map((s, i) => (
+                <div key={i} className="border-l-2 border-gray-200 pl-3">
+                  <div className="text-[20px] sm:text-[28px] font-black text-[#141414] leading-none">{s.value}</div>
+                  <div className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-gray-500 mt-1">{s.label}</div>
                 </div>
-                <button onClick={() => goToPage('contact-us')} className="flex items-center space-x-3 py-2 mt-4 border-b-2 border-[#8A0000] text-[#8A0000] text-[11px] font-bold uppercase tracking-[0.2em] hover:text-[#141414] hover:border-[#141414] transition-all group">
-                  <span>Contact for Events</span><ArrowRight size={12} className="group-hover:translate-x-2 transition-transform" />
-                </button>
-              </div>
+              ))}
             </div>
-          </div>
+            <p className="text-[15px] sm:text-[16px] text-gray-600 leading-relaxed">100,000 students enroll. $300M tuition arrives. OPEX covered at 12.4%. $262M surplus generated. The surplus self-funds scholarships at $40M/year, builds the endowment at $60M/year, and seeds every new College without another campaign dollar. <strong className="text-[#141414]">The fire sustains itself.</strong></p>
+          </motion.div>
         </div>
       </section>
 
       {/* ══════════════════════════════════════════
-          9. BEYOND THE FOUNDING + CONTACT
+          10. BEYOND THE FOUNDING
           ══════════════════════════════════════════ */}
-      <section id="beyond" className="scroll-mt-[110px] bg-gray-50 py-16 sm:py-24 lg:py-36">
+      <section id="beyond" className="scroll-mt-[110px] py-16 sm:py-24 lg:py-36">
         <div ref={beyondAnim.ref} className="max-w-[1400px] mx-auto w-full px-5 sm:px-8 lg:px-20">
-          {/* Four phase cards with images */}
           <motion.h2 {...clipReveal(beyondAnim.visible)} className="text-[32px] sm:text-[44px] md:text-[56px] font-black leading-[0.92] tracking-tighter text-[#141414] mb-4">
             Beyond the founding
           </motion.h2>
-          <motion.p {...fadeUp(beyondAnim.visible, 0.1)} className="text-[15px] sm:text-[16px] text-gray-600 max-w-2xl leading-relaxed mb-10 sm:mb-16">When the founding goal is reached, the campaign evolves. The constellation endures. The community deepens. The mission continues &mdash; not as an ending, but as a beginning. Four phases to build a university that spans the world.</motion.p>
+          <motion.p {...fadeUp(beyondAnim.visible, 0.1)} className="text-[15px] sm:text-[16px] text-gray-600 max-w-2xl leading-relaxed mb-10 sm:mb-16">When the $100M is raised and 100,000 students walk through the doors of 50 Colleges, the founding campaign ends. But the university is just beginning. The match lights the fuel. The fire sustains itself.</motion.p>
 
+          {/* Elevator Pitch */}
+          <motion.div {...scaleIn(beyondAnim.visible, 0.15)} className="bg-[#8A0000] p-6 sm:p-10 lg:p-14 mb-12 sm:mb-20">
+            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/50 block mb-4">The Elevator Pitch</span>
+            <p className="text-[16px] sm:text-[20px] md:text-[24px] font-light text-white leading-[1.6] mb-6">
+              200 million people qualified for university who will never attend. Artemis enrolls 100,000 students at $3,000/year across 50 Colleges in 35 countries. After Year 1, the university generates $262M annual surplus &mdash; funding 13,300 scholarships, building $60M/year endowment, and operating at 12.4% cost ratio.
+            </p>
+            <p className="text-[14px] sm:text-[16px] text-white/70 font-bold uppercase tracking-[0.15em]">The $100M founding campaign is the match. Tuition is the fuel. The fire sustains itself.</p>
+          </motion.div>
+
+          {/* Four phase cards with images */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-12 sm:mb-24">
             {[
-              { phase: 'Phase I', title: 'The Founding', period: '2025 \u2014 2028', goal: sym + '25M', desc: 'Raise the capital. Build the first residential hub. Enrol the inaugural cohort. Establish the endowment. Create the digital estate. Everything from nothing. Your donation builds the physical and intellectual foundations of a university that will endure for centuries \u2014 and your name is inscribed in its first chapter.', icon: Rocket, img: 'https://images.unsplash.com/photo-1594750852563-5ed8e0421d40?auto=format&fit=crop&q=80&w=600' },
-              { phase: 'Phase II', title: 'The Expansion', period: '2028 \u2014 2033', goal: sym + '50M', desc: 'Scale to 15 nodes on 5 continents. Triple the student body. Launch the next generation of research institutes and residential colleges. The giving community becomes permanent philanthropic infrastructure \u2014 an engine that accelerates rather than a campaign that ends.', icon: Globe, img: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=600' },
-              { phase: 'Phase III', title: 'The Network', period: '2033 \u2014 2040', goal: sym + '150M', desc: 'Expand to 50 nodes across every inhabited continent. 10,000 students. 100 permanently endowed institutes. A fully realised planetary university where knowledge flows without borders and every scholar has a home. The endowment becomes self-sustaining.', icon: Landmark, img: 'https://images.unsplash.com/photo-1739298061766-e2751d92e9db?auto=format&fit=crop&q=80&w=600' },
-              { phase: 'Phase IV', title: 'The Perpetuity', period: '2040 \u2014 Beyond', goal: 'Perpetual', desc: 'Artemis operates in perpetuity, independent of tuition dependency, government funding, or commercial pressure. 100+ nodes. A global scholarly commons that renews itself with each generation. The Founding Campaign becomes the Artemis Foundation \u2014 a permanent charitable trust stewarding the mission for centuries.', icon: Building2, img: 'https://images.unsplash.com/photo-1624555130296-e551faf8969b?auto=format&fit=crop&q=80&w=600' },
+              { phase: 'Phase I', title: 'The Founding', period: '2025 \u2014 2028', goal: sym + '100M', desc: 'The founding campaign. 50 Colleges acquired. 2,000 faculty hired. 100,000 students enrolled. The match that lights the fuel. Your gift is the spark that makes everything else self-sustaining.', icon: Rocket, img: 'https://images.unsplash.com/photo-1594750852563-5ed8e0421d40?auto=format&fit=crop&q=80&w=600' },
+              { phase: 'Phase II', title: 'The Expansion', period: '2028 \u2014 2033', goal: 'Surplus', desc: 'After Year 1, $262M annual surplus self-funds expansion. New Colleges acquired from surplus. Scholarships scaled to 13,300/year. Endowment growing at $60M/year. No further campaign needed.', icon: Globe, img: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=600' },
+              { phase: 'Phase III', title: 'The Network', period: '2033 \u2014 2040', goal: 'Endowment', desc: 'The endowment reaches self-sustaining levels. Artemis operates independently of any single funding source. 100+ Colleges. Research endowment in perpetuity. A planetary university that renews itself with each generation.', icon: Landmark, img: 'https://images.unsplash.com/photo-1739298061766-e2751d92e9db?auto=format&fit=crop&q=80&w=600' },
+              { phase: 'Phase IV', title: 'The Perpetuity', period: '2040 \u2014 Beyond', goal: 'Perpetual', desc: 'Artemis operates in perpetuity, independent of tuition dependency, government funding, or commercial pressure. A global scholarly commons that endures for centuries. The founding campaign becomes the Artemis Foundation.', icon: Building2, img: 'https://images.unsplash.com/photo-1624555130296-e551faf8969b?auto=format&fit=crop&q=80&w=600' },
             ].map((p, i) => {
               const Icon = p.icon;
               return (
@@ -1274,28 +1306,6 @@ export default function FundraisingCampaign({ goToPage }: Props) {
             })}
           </div>
 
-          {/* Parallax image card with future stats */}
-          <motion.div {...scaleIn(beyondAnim.visible, 0.3)} className="relative w-full min-h-[320px] sm:min-h-[380px] md:min-h-[460px] overflow-hidden mb-12 sm:mb-24">
-            <img src="https://images.unsplash.com/photo-1594750852563-5ed8e0421d40?auto=format&fit=crop&q=80&w=1400" alt="The Future of Artemis" className="absolute inset-0 w-full h-full object-cover grayscale" />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent" />
-            <div className="relative z-10 flex items-end h-full min-h-[320px] sm:min-h-[380px] md:min-h-[460px] p-4 sm:p-8 md:p-14">
-              <div className="bg-white w-full sm:max-w-sm md:max-w-lg p-4 sm:p-6 md:p-8 shadow-xl">
-                <div className="text-[10px] font-bold text-[#8A0000] tracking-widest mb-3 uppercase">By the Numbers</div>
-                <h3 className="text-[20px] sm:text-[24px] font-bold text-[#141414] mb-4 sm:mb-6 leading-tight">A university built to span the world</h3>
-                <div className="grid grid-cols-2 gap-4 sm:gap-6">
-                  {[{ value: '50+', label: 'Global Nodes', detail: 'Residential hubs across every continent' },{ value: '10,000', label: 'Students', detail: 'Full capacity across the network' },{ value: '100', label: 'Institutes', detail: 'Permanently endowed, independent' },{ value: sym+'150M', label: 'Endowment', detail: 'Self-sustaining by Phase III' }].map((s, i) => (
-                    <div key={i} className="relative pl-4">
-                      <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#8A0000]"></div>
-                      <div className="text-[18px] sm:text-[24px] font-black text-[#141414] leading-none mb-1">{s.value}</div>
-                      <div className="text-[8px] sm:text-[9px] font-bold uppercase tracking-widest text-[#8A0000] leading-tight mb-0.5">{s.label}</div>
-                      <div className="text-[9px] sm:text-[10px] text-gray-500 leading-snug">{s.detail}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </motion.div>
-
           {/* Voices from the Future */}
           <div className="mb-12 sm:mb-24">
             <div className="relative flex items-center mb-8 sm:mb-14">
@@ -1306,7 +1316,7 @@ export default function FundraisingCampaign({ goToPage }: Props) {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-20">
               {[
                 { quote: "I was the first in my village to attend university \u2014 and the first to attend one that didn't care about my village's wealth. Artemis saw my mind, not my postcode. The scholarship that brought me here was funded by someone I will never meet, but whose name I carry in my thesis dedication.", name: 'Amara Osei', role: 'Inaugural Cohort, Weavers Commons', loc: 'Accra \u2192 Geneva' },
-                { quote: "I donated because I remember being seventeen and brilliant and broke. I remember the university that let me in anyway \u2014 and how that changed everything. Artemis is that chance, scaled to the planet. I couldn't not give.", name: 'Dr. Elena Vasquez', role: "Chancellor's Circle, Founding Donor", loc: 'Mexico City' },
+                { quote: "I donated because I remember being seventeen and brilliant and broke. I remember the university that let me in anyway \u2014 and how that changed everything. Artemis is that chance, scaled to the planet. I couldn't not give.", name: 'Dr. Elena Vasquez', role: "Founders' Circle, Founding Donor", loc: 'Mexico City' },
               ].map((v, i) => (
                 <motion.div key={i} {...fadeUp(beyondAnim.visible, i * 0.15)}>
                   <svg className="w-6 h-6 sm:w-8 sm:h-8 text-[#8A0000] opacity-20 mb-4 sm:mb-6" viewBox="0 0 24 24" fill="currentColor"><path d="M4.583 17.321C3.553 16.227 3 15 3 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179zm10 0C13.553 16.227 13 15 13 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179z"/></svg>
@@ -1389,9 +1399,9 @@ export default function FundraisingCampaign({ goToPage }: Props) {
         <div className="max-w-[1400px] mx-auto w-full px-5 sm:px-8 lg:px-20 flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8">
           <div className="text-center md:text-left">
             <h2 className="text-[20px] sm:text-[32px] md:text-[40px] font-extrabold leading-tight tracking-tighter text-white mb-2">
-              Every great university began<br />with someone who believed.
+              The campaign is the match.<br />The fire sustains itself.
             </h2>
-            <p className="text-[14px] sm:text-[16px] text-white/70 leading-relaxed max-w-lg mx-auto md:mx-0">This is your moment to place a star in a constellation that will guide scholars for centuries. The next chapter starts with you.</p>
+            <p className="text-[14px] sm:text-[16px] text-white/70 leading-relaxed max-w-lg mx-auto md:mx-0">$100M. 12 months. 100,000 students. A university that outlives its founders. Your gift is the spark.</p>
           </div>
           <button onClick={() => document.getElementById('give')?.scrollIntoView({ behavior: 'smooth' })} className="flex items-center space-x-3 bg-white text-[#8A0000] px-8 sm:px-10 py-3 sm:py-4 text-[12px] sm:text-[13px] font-bold uppercase tracking-[0.2em] hover:bg-gray-100 transition-colors shrink-0 group">
             <span>Give Now</span>

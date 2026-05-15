@@ -201,6 +201,143 @@ function AnimatedCounter({ value, prefix = '', suffix = '', className = '' }: { 
   return <span ref={ref} className={className}>{prefix}{formatted}{suffix}</span>;
 }
 
+/* ─── Phase Slider Component ─── */
+function PhaseSlider() {
+  const [active, setActive] = useState(0);
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const total = MILESTONES.length;
+
+  const scrollTo = (idx: number) => {
+    setActive(Math.max(0, Math.min(idx, total - 1)));
+    if (sliderRef.current) {
+      const child = sliderRef.current.children[idx] as HTMLElement;
+      if (child) {
+        sliderRef.current.scrollTo({ left: child.offsetLeft - 20, behavior: 'smooth' });
+      }
+    }
+  };
+
+  const handleScroll = useCallback(() => {
+    if (!sliderRef.current) return;
+    const scrollLeft = sliderRef.current.scrollLeft;
+    const childWidth = (sliderRef.current.children[0] as HTMLElement)?.offsetWidth || 400;
+    const newActive = Math.round(scrollLeft / childWidth);
+    if (newActive !== active && newActive >= 0 && newActive < total) {
+      setActive(newActive);
+    }
+  }, [active, total]);
+
+  return (
+    <div>
+      {/* Phase step indicators */}
+      <div className="flex items-center mb-8 sm:mb-12">
+        {MILESTONES.map((ms, i) => {
+          const Icon = ms.icon;
+          return (
+            <React.Fragment key={i}>
+              <button
+                onClick={() => scrollTo(i)}
+                className={`flex items-center gap-2 px-3 sm:px-5 py-2.5 transition-all shrink-0 ${
+                  i === active
+                    ? 'bg-[#8A0000] text-white'
+                    : i < active
+                    ? 'bg-[#8A0000]/10 text-[#8A0000]'
+                    : 'bg-gray-100 text-gray-400'
+                }`}
+              >
+                <Icon size={16} />
+                <span className="text-[11px] sm:text-[13px] font-black uppercase tracking-wider hidden sm:inline">{ms.title}</span>
+                <span className="text-[11px] sm:text-[13px] font-black uppercase tracking-wider sm:hidden">{['I','II','III','IV'][i]}</span>
+              </button>
+              {i < total - 1 && (
+                <div className={`flex-1 h-[2px] min-w-[20px] ${i < active ? 'bg-[#8A0000]' : 'bg-gray-200'}`} />
+              )}
+            </React.Fragment>
+          );
+        })}
+      </div>
+
+      {/* Horizontal scrolling cards */}
+      <div
+        ref={sliderRef}
+        onScroll={handleScroll}
+        className="flex gap-6 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-4"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      >
+        {MILESTONES.map((ms, i) => {
+          const Icon = ms.icon;
+          return (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+              viewport={{ once: true }}
+              className="snap-start shrink-0 w-[85vw] sm:w-[600px] md:w-[700px] bg-white border border-gray-200 p-6 sm:p-8 lg:p-10"
+            >
+              <div className="flex items-center gap-4 mb-5">
+                <div className={`w-12 h-12 flex items-center justify-center border-2 ${i <= active ? 'bg-[#8A0000] border-[#8A0000]' : 'bg-white border-gray-300'}`}>
+                  <Icon size={20} className={i <= active ? 'text-white' : 'text-gray-400'} />
+                </div>
+                <div>
+                  <h4 className="text-[22px] sm:text-[26px] font-black text-[#141414]">{ms.title}</h4>
+                  <div className="flex items-center gap-3 mt-1">
+                    <span className="text-[13px] font-black text-[#8A0000]">{sym}{fmtShort(ms.target)}</span>
+                    <span className="text-[12px] text-gray-400">{ms.date}</span>
+                  </div>
+                </div>
+              </div>
+
+              <p className="text-[15px] sm:text-[16px] text-gray-600 leading-[1.75] mb-6">{ms.desc}</p>
+
+              <div className="border-t border-gray-100 pt-5">
+                <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#8A0000] mb-3 block">Deliverables</span>
+                <ul className="space-y-2.5">
+                  {ms.deliverables.map((d, j) => (
+                    <li key={j} className="flex items-start gap-2.5">
+                      <Check size={14} className="mt-0.5 shrink-0 text-[#8A0000]" />
+                      <span className="text-[13px] sm:text-[14px] text-gray-600">{d}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {/* Navigation arrows */}
+      <div className="flex items-center justify-between mt-6 sm:mt-8">
+        <div className="flex gap-2">
+          {MILESTONES.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => scrollTo(i)}
+              className={`w-2.5 h-2.5 rounded-full transition-all ${i === active ? 'bg-[#8A0000] w-8' : i < active ? 'bg-[#8A0000]/40' : 'bg-gray-300'}`}
+            />
+          ))}
+        </div>
+        <div className="flex gap-3">
+          <button
+            onClick={() => scrollTo(active - 1)}
+            disabled={active === 0}
+            className="w-10 h-10 flex items-center justify-center border border-gray-200 hover:border-[#8A0000] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
+          </button>
+          <button
+            onClick={() => scrollTo(active + 1)}
+            disabled={active === total - 1}
+            className="w-10 h-10 flex items-center justify-center border border-gray-200 hover:border-[#8A0000] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ─── Main Component ─── */
 export default function FundraisingCampaign({ goToPage }: Props) {
   const activeSection = useActiveSection(['case', 'pillars', 'ask', 'phases', 'opportunities', 'circles', 'ways', 'give', 'model']);
@@ -330,72 +467,23 @@ export default function FundraisingCampaign({ goToPage }: Props) {
       />
 
       {/* ══════════════════════════════════════════
-          CAMPAIGN PROGRESS — Horizontal Segmented Bar
+          CAMPAIGN PROGRESS
           ══════════════════════════════════════════ */}
       <section className="bg-white py-12 sm:py-20 lg:py-28 border-b border-gray-100">
         <div className="max-w-[1400px] mx-auto w-full px-5 sm:px-8 lg:px-20">
           {/* Section Header */}
           <div className="mb-10 sm:mb-14">
             <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#8A0000] block mb-3">Campaign Progress</span>
-            <div className="flex items-baseline gap-2 flex-wrap">
-              <AnimatedCounter value={CAMPAIGN.raised} prefix={sym} className="text-[26px] sm:text-[32px] md:text-[40px] font-black tracking-tighter text-[#141414]" />
-              <span className="text-[14px] sm:text-[16px] font-normal text-gray-400 tracking-normal">raised of {sym}{fmtShort(CAMPAIGN.goal)}</span>
+            <div className="flex items-baseline gap-3 flex-wrap">
+              <AnimatedCounter value={CAMPAIGN.raised} prefix={sym} className="text-[28px] sm:text-[36px] md:text-[48px] font-black tracking-tighter text-[#141414]" />
+              <span className="text-[16px] sm:text-[20px] font-normal text-gray-400">of {sym}{fmtShort(CAMPAIGN.goal)} goal</span>
+              <span className="text-[14px] sm:text-[18px] font-black text-[#8A0000]">({pct}%)</span>
             </div>
           </div>
 
-          {/* Horizontal Segmented Bar Visualization */}
-          <div className="mb-10 sm:mb-14">
-            {/* Main segmented bar */}
-            <div className="h-12 sm:h-16 w-full flex overflow-hidden bg-gray-100 relative">
-              {FIVE_PILLARS.map((p, i) => {
-                const isFilled = pct >= FIVE_PILLARS.slice(0, i + 1).reduce((sum, pillar) => sum + pillar.pct, 0) - p.pct;
-                const partialPct = (() => {
-                  const cumulativeBefore = FIVE_PILLARS.slice(0, i).reduce((sum, pillar) => sum + pillar.pct, 0);
-                  if (pct >= cumulativeBefore + p.pct) return 1;
-                  if (pct <= cumulativeBefore) return 0;
-                  return (pct - cumulativeBefore) / p.pct;
-                })();
-                return (
-                  <motion.div
-                    key={p.id}
-                    initial={{ width: 0 }}
-                    whileInView={{ width: `${p.pct}%` }}
-                    transition={{ duration: 1.2, delay: i * 0.15, ease: 'easeOut' }}
-                    viewport={{ once: true }}
-                    className="relative h-full flex items-center justify-center overflow-hidden group cursor-default"
-                    style={{ backgroundColor: isFilled ? '#8A0000' : partialPct > 0 ? `rgba(138, 0, 0, ${0.15 + partialPct * 0.85})` : '#f3f4f6' }}
-                  >
-                    {/* Partial fill overlay */}
-                    {!isFilled && partialPct > 0 && (
-                      <motion.div
-                        className="absolute inset-y-0 left-0 bg-[#8A0000]"
-                        initial={{ width: 0 }}
-                        whileInView={{ width: `${partialPct * 100}%` }}
-                        transition={{ duration: 1, delay: 0.8 + i * 0.15, ease: 'easeOut' }}
-                        viewport={{ once: true }}
-                      />
-                    )}
-                    {/* Label inside segment */}
-                    <span className={`relative z-10 text-[10px] sm:text-[12px] font-black uppercase tracking-widest whitespace-nowrap ${isFilled || partialPct > 0.5 ? 'text-white' : 'text-gray-400'}`}>
-                      {p.title} {p.pct}%
-                    </span>
-                  </motion.div>
-                );
-              })}
-            </div>
-
-            {/* Pillar detail row below */}
-            <div className="flex mt-3">
-              {FIVE_PILLARS.map((p, i) => (
-                <div key={p.id} style={{ width: `${p.pct}%` }} className="flex items-center justify-center gap-1.5 py-2">
-                  <p.icon size={12} className="text-[#8A0000]" />
-                  <span className="text-[9px] sm:text-[10px] font-bold text-gray-500 uppercase tracking-wider">{sym}{fmtShort(p.goal)}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* Overall progress line */}
-            <div className="relative h-1 bg-gray-100 w-full overflow-hidden mt-6">
+          {/* Clear progress bar */}
+          <div className="mb-12 sm:mb-16">
+            <div className="relative h-3 sm:h-4 bg-gray-100 w-full overflow-hidden">
               <motion.div
                 className="h-full bg-gradient-to-r from-[#8A0000] to-[#a01010]"
                 initial={{ width: 0 }}
@@ -410,10 +498,21 @@ export default function FundraisingCampaign({ goToPage }: Props) {
                 transition={{ duration: 2.5, repeat: Infinity, ease: 'linear', repeatDelay: 4 }}
               />
             </div>
+
+            {/* Milestone markers on the bar */}
+            <div className="relative mt-4">
+              <div className="flex justify-between text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-gray-400">
+                <span>{sym}0</span>
+                <span>{sym}25M</span>
+                <span>{sym}50M</span>
+                <span>{sym}75M</span>
+                <span>{sym}100M</span>
+              </div>
+            </div>
           </div>
 
-          {/* Live stats row */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
+          {/* Stats + Pillar breakdown row */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-6 sm:gap-8">
             {[
               { label: 'Donors', value: CAMPAIGN.donors, animate: true, icon: Users },
               { label: 'Avg. Gift', value: Math.round(CAMPAIGN.raised / CAMPAIGN.donors), prefix: sym, animate: true, icon: CreditCard },
@@ -447,6 +546,35 @@ export default function FundraisingCampaign({ goToPage }: Props) {
                 </div>
               </motion.div>
             ))}
+          </div>
+
+          {/* Pillar allocation row */}
+          <div className="mt-10 sm:mt-14 pt-10 sm:pt-14 border-t border-gray-100">
+            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400 block mb-6">How the {sym}100M is allocated</span>
+            <div className="grid grid-cols-5 gap-0 h-2.5 w-full overflow-hidden">
+              {FIVE_PILLARS.map((p, i) => (
+                <motion.div
+                  key={p.id}
+                  initial={{ width: 0 }}
+                  whileInView={{ width: `${p.pct}%` }}
+                  transition={{ duration: 1, delay: i * 0.1, ease: 'easeOut' }}
+                  viewport={{ once: true }}
+                  className="h-full"
+                  style={{ backgroundColor: i === 0 ? '#8A0000' : i === 1 ? '#a01010' : i === 2 ? '#b82020' : i === 3 ? '#c94040' : '#d96060' }}
+                />
+              ))}
+            </div>
+            <div className="grid grid-cols-5 mt-3">
+              {FIVE_PILLARS.map((p, i) => {
+                const PIcon = p.icon;
+                return (
+                  <div key={p.id} className="flex items-center gap-1.5">
+                    <PIcon size={11} className="text-[#8A0000] shrink-0" />
+                    <span className="text-[9px] sm:text-[10px] font-bold text-gray-500 uppercase tracking-wider truncate">{p.title} {p.pct}%</span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </section>
@@ -780,124 +908,20 @@ export default function FundraisingCampaign({ goToPage }: Props) {
       </section>
 
       {/* ══════════════════════════════════════════
-          THE ASK
+          4. TIMELINE — 4 Phases to Launch (Horizontal Slider)
           ══════════════════════════════════════════ */}
-      <section id="ask" className="scroll-mt-[110px] bg-white py-16 sm:py-24 lg:py-36">
-        <div ref={askAnim.ref} className="max-w-[1400px] mx-auto w-full px-5 sm:px-8 lg:px-20">
-          <motion.div {...fadeUp(askAnim.visible)} className="bg-[#8A0000] p-8 sm:p-12 lg:p-20 text-center">
-          <div className="max-w-3xl mx-auto">
-            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/50 block mb-6">The Ask</span>
-            <h2 className="text-[36px] sm:text-[52px] md:text-[72px] lg:text-[88px] font-black leading-[0.9] tracking-tighter text-white mb-6">
-              $100 million.<br />12 months.<br />For Civilization.
-            </h2>
-            <p className="text-[16px] sm:text-[18px] text-white/70 leading-relaxed max-w-2xl mx-auto mb-8">
-              This is the founding campaign. Not an annual fund. Not a capital drive. The zero-to-one moment — the moment a university that should have existed for centuries finally does.
-            </p>
-            <p className="text-[15px] sm:text-[17px] text-white/80 leading-relaxed max-w-2xl mx-auto mb-10">
-              After this, Artemis is self-sustaining. Forever. Every student who walks through our doors, every paper our faculty publishes, every community our Colleges anchor — all of it funded by the model itself.
-            </p>
-            <div className="border-t border-white/20 pt-8 max-w-xl mx-auto">
-              <p className="text-[20px] sm:text-[24px] md:text-[28px] font-black text-white tracking-tight leading-tight">
-                You&apos;re not giving to a university.<br />You&apos;re founding one.
-              </p>
-            </div>
-            <div className="mt-10">
-              <button onClick={() => document.getElementById('give')?.scrollIntoView({ behavior: 'smooth' })} className="inline-flex items-center space-x-3 px-10 py-5 bg-white text-[#8A0000] text-[12px] font-bold uppercase tracking-[0.25em] hover:bg-gray-100 transition-colors group">
-                <span>Give Now</span>
-                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-              </button>
-            </div>
-          </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════
-          4. TIMELINE — 4 Phases to Launch
-          ══════════════════════════════════════════ */}
-      <section id="phases" className="scroll-mt-[110px] py-16 sm:py-24 lg:py-36">
+      <section id="phases" className="scroll-mt-[110px] py-16 sm:py-24 lg:py-36 bg-gray-50">
         <div ref={phasesAnim.ref} className="max-w-[1400px] mx-auto w-full px-5 sm:px-8 lg:px-20">
-          {/* Phase indicator */}
+          {/* Header */}
           <motion.div {...clipReveal(phasesAnim.visible)} className="mb-10 sm:mb-16">
-            <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
-              {['I', 'II', 'III', 'IV'].map((num, i) => (
-                <React.Fragment key={i}>
-                  <span className="text-[24px] sm:text-[48px] md:text-[64px] font-black text-[#8A0000] leading-none">{num}</span>
-                  {i < 3 && <ArrowRight size={14} className="text-gray-300 hidden sm:block" />}
-                </React.Fragment>
-              ))}
-            </div>
             <h2 className="text-[32px] sm:text-[44px] md:text-[56px] font-black leading-[0.92] tracking-tighter text-[#141414] mb-4">
               4 phases to launch
             </h2>
-            <p className="text-[16px] text-gray-600 max-w-xl leading-relaxed">Four phases to launch. From campaign to campus. Not just fundraising — a complete launch sequence. Each phase has concrete deliverables. Not aspirations — commitments.</p>
+            <p className="text-[16px] text-gray-600 leading-relaxed">From campaign to campus. Not just fundraising — a complete launch sequence. Each phase has concrete deliverables. Not aspirations — commitments.</p>
           </motion.div>
 
-          {/* Vertical timeline */}
-          <div className="relative">
-            {/* Crimson connected line */}
-            <div className="absolute left-[19px] lg:left-[23px] top-0 bottom-0 w-[2px] bg-gray-200">
-              <motion.div
-                className="w-full bg-[#8A0000]"
-                initial={{ height: 0 }}
-                whileInView={{ height: `${(MILESTONES.filter(m => m.reached).length / MILESTONES.length) * 100}%` }}
-                transition={{ duration: 1.5, ease: 'easeOut' }}
-                viewport={{ once: true }}
-              />
-            </div>
-
-            {/* Timeline items */}
-            <div className="space-y-0">
-              {MILESTONES.map((ms, i) => {
-                const Icon = ms.icon;
-                return (
-                  <motion.div
-                    key={i}
-                    {...slideLeft(phasesAnim.visible, i * 0.12)}
-                    className="relative grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-start py-10"
-                  >
-                    {/* Left — Phase node */}
-                    <div className="lg:col-span-1 flex items-start pt-1">
-                      <div className={`w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center border-2 relative z-10 ${ms.reached ? 'bg-[#8A0000] border-[#8A0000]' : 'bg-white border-gray-300'}`}>
-                        <Icon size={18} className={ms.reached ? 'text-white' : 'text-gray-400'} />
-                      </div>
-                    </div>
-
-                    {/* Middle — Content */}
-                    <div className="lg:col-span-6">
-                      <div className="flex items-baseline gap-3 mb-2">
-                        <h4 className="text-[24px] font-bold text-[#141414]">{ms.title}</h4>
-                        {ms.reached && <Check size={18} className="text-[#8A0000] shrink-0" />}
-                      </div>
-                      <div className="flex items-center gap-4 mb-4">
-                        <span className="text-[14px] font-black text-[#8A0000]">{sym}{fmtShort(ms.target)}</span>
-                        <span className="text-[13px] text-gray-400">{ms.date}</span>
-                      </div>
-                      <p className="text-[15px] text-gray-600 leading-relaxed mb-5">{ms.desc}</p>
-                      <ul className="space-y-2">
-                        {ms.deliverables.map((d, j) => (
-                          <li key={j} className="flex items-start gap-2">
-                            <Check size={13} className={`mt-1 shrink-0 ${ms.reached ? 'text-[#8A0000]' : 'text-gray-300'}`} />
-                            <span className="text-[13px] text-gray-600">{d}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    {/* Right — Progress indicator */}
-                    <div className="lg:col-span-5 lg:pt-2">
-                      <div className="lg:ml-auto lg:max-w-[280px]">
-                        <div className="h-2 bg-gray-200 w-full overflow-hidden mb-2">
-                          <div className={`h-full transition-all duration-1000 ${ms.reached ? 'bg-[#8A0000]' : 'bg-gray-300'}`} style={{ width: ms.reached ? '100%' : `${Math.max(5, Math.min(95, (CAMPAIGN.raised / ms.target) * 100))}%` }} />
-                        </div>
-                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">{ms.reached ? 'Complete' : 'Upcoming'}</span>
-                      </div>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </div>
+          {/* Horizontal Phase Slider */}
+          <PhaseSlider />
         </div>
       </section>
 
@@ -1445,6 +1469,39 @@ export default function FundraisingCampaign({ goToPage }: Props) {
       </section>
 
       {/* ══════════════════════════════════════════
+          THE ASK
+          ══════════════════════════════════════════ */}
+      <section id="ask" className="scroll-mt-[110px] bg-white py-16 sm:py-24 lg:py-36">
+        <div ref={askAnim.ref} className="max-w-[1400px] mx-auto w-full px-5 sm:px-8 lg:px-20">
+          <motion.div {...fadeUp(askAnim.visible)} className="bg-[#8A0000] p-8 sm:p-12 lg:p-20 text-center">
+          <div className="max-w-3xl mx-auto">
+            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/50 block mb-6">The Ask</span>
+            <h2 className="text-[36px] sm:text-[52px] md:text-[72px] lg:text-[88px] font-black leading-[0.9] tracking-tighter text-white mb-6">
+              $100 million.<br />12 months.<br />For Civilization.
+            </h2>
+            <p className="text-[16px] sm:text-[18px] text-white/70 leading-relaxed max-w-2xl mx-auto mb-8">
+              This is the founding campaign. Not an annual fund. Not a capital drive. The zero-to-one moment — the moment a university that should have existed for centuries finally does.
+            </p>
+            <p className="text-[15px] sm:text-[17px] text-white/80 leading-relaxed max-w-2xl mx-auto mb-10">
+              After this, Artemis is self-sustaining. Forever. Every student who walks through our doors, every paper our faculty publishes, every community our Colleges anchor — all of it funded by the model itself.
+            </p>
+            <div className="border-t border-white/20 pt-8 max-w-xl mx-auto">
+              <p className="text-[20px] sm:text-[24px] md:text-[28px] font-black text-white tracking-tight leading-tight">
+                You&apos;re not giving to a university.<br />You&apos;re founding one.
+              </p>
+            </div>
+            <div className="mt-10">
+              <button onClick={() => document.getElementById('give')?.scrollIntoView({ behavior: 'smooth' })} className="inline-flex items-center space-x-3 px-10 py-5 bg-white text-[#8A0000] text-[12px] font-bold uppercase tracking-[0.25em] hover:bg-gray-100 transition-colors group">
+                <span>Give Now</span>
+                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
+          </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
           10. BEYOND THE FOUNDING
           ══════════════════════════════════════════ */}
       <section id="beyond" className="scroll-mt-[110px] py-16 sm:py-24 lg:py-36">
@@ -1580,24 +1637,6 @@ export default function FundraisingCampaign({ goToPage }: Props) {
               </div>
             </div>
           </motion.div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════
-          Final CTA — Crimson Bar
-          ══════════════════════════════════════════ */}
-      <section className="bg-[#8A0000] py-10 sm:py-16">
-        <div className="max-w-[1400px] mx-auto w-full px-5 sm:px-8 lg:px-20 flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8">
-          <div className="text-center md:text-left">
-            <h2 className="text-[20px] sm:text-[32px] md:text-[40px] font-extrabold leading-tight tracking-tighter text-white mb-2">
-              The campaign is the match.<br />The fire sustains itself.
-            </h2>
-            <p className="text-[14px] sm:text-[16px] text-white/70 leading-relaxed max-w-lg mx-auto md:mx-0">$100M. 12 months. 100,000 students. A university that outlives its founders. Your gift is the spark.</p>
-          </div>
-          <button onClick={() => document.getElementById('give')?.scrollIntoView({ behavior: 'smooth' })} className="flex items-center space-x-3 bg-white text-[#8A0000] px-8 sm:px-10 py-3 sm:py-4 text-[12px] sm:text-[13px] font-bold uppercase tracking-[0.2em] hover:bg-gray-100 transition-colors shrink-0 group">
-            <span>Give Now</span>
-            <ArrowRight size={16} className="group-hover:translate-x-2 transition-transform" />
-          </button>
         </div>
       </section>
 

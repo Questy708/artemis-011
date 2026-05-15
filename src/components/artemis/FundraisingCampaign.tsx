@@ -586,8 +586,8 @@ export default function FundraisingCampaign({ goToPage }: Props) {
         <div ref={caseAnim.ref} className="max-w-[1400px] mx-auto w-full px-5 sm:px-8 lg:px-20">
 
           {/* Section Title — full width */}
-          <motion.h2 {...slideLeft(caseAnim.visible)} className="text-[32px] sm:text-[44px] md:text-[60px] lg:text-[72px] font-black leading-[0.92] tracking-tighter text-[#141414] mb-16 sm:mb-24">
-            Why Now,<br /><span className="text-[#8A0000]">Why Us</span>
+          <motion.h2 {...slideLeft(caseAnim.visible)} className="text-[28px] sm:text-[40px] md:text-[52px] lg:text-[64px] font-black leading-[1] tracking-tighter text-[#141414] mb-16 sm:mb-24">
+            Why Now, <span className="text-[#8A0000]">Why Us</span>
           </motion.h2>
 
           {/* Full-Width Content */}

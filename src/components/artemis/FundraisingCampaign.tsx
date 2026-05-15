@@ -548,7 +548,34 @@ export default function FundraisingCampaign({ goToPage }: Props) {
             ))}
           </div>
 
-
+          {/* Pillar allocation row */}
+          <div className="mt-10 sm:mt-14 pt-10 sm:pt-14 border-t border-gray-100">
+            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400 block mb-6">How the {sym}100M is allocated</span>
+            <div className="grid grid-cols-5 gap-0 h-2.5 w-full overflow-hidden">
+              {FIVE_PILLARS.map((p, i) => (
+                <motion.div
+                  key={p.id}
+                  initial={{ width: 0 }}
+                  whileInView={{ width: `${p.pct}%` }}
+                  transition={{ duration: 1, delay: i * 0.1, ease: 'easeOut' }}
+                  viewport={{ once: true }}
+                  className="h-full"
+                  style={{ backgroundColor: i === 0 ? '#8A0000' : i === 1 ? '#a01010' : i === 2 ? '#b82020' : i === 3 ? '#c94040' : '#d96060' }}
+                />
+              ))}
+            </div>
+            <div className="grid grid-cols-5 mt-3">
+              {FIVE_PILLARS.map((p, i) => {
+                const PIcon = p.icon;
+                return (
+                  <div key={p.id} className="flex items-center gap-1.5">
+                    <PIcon size={11} className="text-[#8A0000] shrink-0" />
+                    <span className="text-[9px] sm:text-[10px] font-bold text-gray-500 uppercase tracking-wider truncate">{p.title} {p.pct}%</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </section>
 
@@ -558,19 +585,9 @@ export default function FundraisingCampaign({ goToPage }: Props) {
       <section id="case" className="scroll-mt-[110px] py-16 sm:py-24 lg:py-36">
         <div ref={caseAnim.ref} className="max-w-[1400px] mx-auto w-full px-5 sm:px-8 lg:px-20">
 
-          {/* Section break image above title */}
-          <motion.div {...fadeUp(caseAnim.visible, 0)} className="mb-12 sm:mb-16 relative overflow-hidden">
-            <img
-              src="https://images.unsplash.com/photo-1523050854058-8df90110c8f1?auto=format&fit=crop&q=80&w=1800"
-              alt="Knowledge and civilization — the case for Artemis"
-              className="w-full h-[180px] sm:h-[240px] md:h-[300px] object-cover grayscale"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-          </motion.div>
-
-          {/* Section Title — one line */}
-          <motion.h2 {...slideLeft(caseAnim.visible)} className="text-[28px] sm:text-[40px] md:text-[52px] lg:text-[64px] font-black leading-[1] tracking-tighter text-[#141414] mb-16 sm:mb-24">
-            Why Now, <span className="text-[#8A0000]">Why Us</span>
+          {/* Section Title — full width */}
+          <motion.h2 {...slideLeft(caseAnim.visible)} className="text-[32px] sm:text-[44px] md:text-[60px] lg:text-[72px] font-black leading-[0.92] tracking-tighter text-[#141414] mb-16 sm:mb-24">
+            Why Now,<br /><span className="text-[#8A0000]">Why Us</span>
           </motion.h2>
 
           {/* Full-Width Content */}
@@ -1452,6 +1469,39 @@ export default function FundraisingCampaign({ goToPage }: Props) {
       </section>
 
       {/* ══════════════════════════════════════════
+          THE ASK
+          ══════════════════════════════════════════ */}
+      <section id="ask" className="scroll-mt-[110px] bg-white py-16 sm:py-24 lg:py-36">
+        <div ref={askAnim.ref} className="max-w-[1400px] mx-auto w-full px-5 sm:px-8 lg:px-20">
+          <motion.div {...fadeUp(askAnim.visible)} className="bg-[#8A0000] p-8 sm:p-12 lg:p-20 text-center">
+          <div className="max-w-3xl mx-auto">
+            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/50 block mb-6">The Ask</span>
+            <h2 className="text-[36px] sm:text-[52px] md:text-[72px] lg:text-[88px] font-black leading-[0.9] tracking-tighter text-white mb-6">
+              $100 million.<br />12 months.<br />For Civilization.
+            </h2>
+            <p className="text-[16px] sm:text-[18px] text-white/70 leading-relaxed max-w-2xl mx-auto mb-8">
+              This is the founding campaign. Not an annual fund. Not a capital drive. The zero-to-one moment — the moment a university that should have existed for centuries finally does.
+            </p>
+            <p className="text-[15px] sm:text-[17px] text-white/80 leading-relaxed max-w-2xl mx-auto mb-10">
+              After this, Artemis is self-sustaining. Forever. Every student who walks through our doors, every paper our faculty publishes, every community our Colleges anchor — all of it funded by the model itself.
+            </p>
+            <div className="border-t border-white/20 pt-8 max-w-xl mx-auto">
+              <p className="text-[20px] sm:text-[24px] md:text-[28px] font-black text-white tracking-tight leading-tight">
+                You&apos;re not giving to a university.<br />You&apos;re founding one.
+              </p>
+            </div>
+            <div className="mt-10">
+              <button onClick={() => document.getElementById('give')?.scrollIntoView({ behavior: 'smooth' })} className="inline-flex items-center space-x-3 px-10 py-5 bg-white text-[#8A0000] text-[12px] font-bold uppercase tracking-[0.25em] hover:bg-gray-100 transition-colors group">
+                <span>Give Now</span>
+                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
+          </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
           10. BEYOND THE FOUNDING
           ══════════════════════════════════════════ */}
       <section id="beyond" className="scroll-mt-[110px] py-16 sm:py-24 lg:py-36">
@@ -1469,35 +1519,6 @@ export default function FundraisingCampaign({ goToPage }: Props) {
             </p>
             <p className="text-[14px] sm:text-[16px] text-white/70 font-bold uppercase tracking-[0.15em]">The $100M founding campaign is the match. Tuition is the fuel. The fire sustains itself.</p>
           </motion.div>
-
-          {/* THE ASK — inside Beyond section */}
-          <div id="ask" className="scroll-mt-[110px] mb-12 sm:mb-20">
-            <motion.div {...fadeUp(askAnim.visible)} className="bg-[#8A0000] p-8 sm:p-12 lg:p-20 text-center">
-              <div className="max-w-3xl mx-auto">
-                <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/50 block mb-6">The Ask</span>
-                <h2 className="text-[36px] sm:text-[52px] md:text-[72px] lg:text-[88px] font-black leading-[0.9] tracking-tighter text-white mb-6">
-                  $100 million.<br />12 months.<br />For Civilization.
-                </h2>
-                <p className="text-[16px] sm:text-[18px] text-white/70 leading-relaxed max-w-2xl mx-auto mb-8">
-                  This is the founding campaign. Not an annual fund. Not a capital drive. The zero-to-one moment — the moment a university that should have existed for centuries finally does.
-                </p>
-                <p className="text-[15px] sm:text-[17px] text-white/80 leading-relaxed max-w-2xl mx-auto mb-10">
-                  After this, Artemis is self-sustaining. Forever. Every student who walks through our doors, every paper our faculty publishes, every community our Colleges anchor — all of it funded by the model itself.
-                </p>
-                <div className="border-t border-white/20 pt-8 max-w-xl mx-auto">
-                  <p className="text-[20px] sm:text-[24px] md:text-[28px] font-black text-white tracking-tight leading-tight">
-                    You&apos;re not giving to a university.<br />You&apos;re founding one.
-                  </p>
-                </div>
-                <div className="mt-10">
-                  <button onClick={() => document.getElementById('give')?.scrollIntoView({ behavior: 'smooth' })} className="inline-flex items-center space-x-3 px-10 py-5 bg-white text-[#8A0000] text-[12px] font-bold uppercase tracking-[0.25em] hover:bg-gray-100 transition-colors group">
-                    <span>Give Now</span>
-                    <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          </div>
 
           {/* Four phase cards with images */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-12 sm:mb-24">

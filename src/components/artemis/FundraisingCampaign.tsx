@@ -462,10 +462,8 @@ export default function FundraisingCampaign({ goToPage }: Props) {
             Why Now,<br /><span className="text-[#8A0000]">Why Us</span>
           </motion.h2>
 
-          {/* 2-Column Layout: Content + Bold Pillar Words Sidebar */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
-            {/* LEFT — Main Content */}
-            <div className="lg:col-span-9">
+          {/* Full-Width Content */}
+          <div>
 
           {/* ── A. The Broken System — Built for a Gone World ── */}
           <motion.div {...fadeUp(caseAnim.visible, 0.15)} className="mb-20 sm:mb-28">
@@ -566,10 +564,10 @@ export default function FundraisingCampaign({ goToPage }: Props) {
 
           {/* ── C. Why Us — Visionary Points ── */}
           <motion.div {...fadeUp(caseAnim.visible, 0.3)} className="mb-20 sm:mb-28">
-            {/* Thematic Banner */}
-            <motion.div {...fadeUp(caseAnim.visible, 0.25)} className="text-center mb-12 sm:mb-16">
-              <p className="text-[28px] sm:text-[40px] md:text-[52px] font-black text-[#8A0000] leading-[1.1] tracking-tight">
-                It is a new species of university.
+            {/* Thematic Statement */}
+            <motion.div {...fadeUp(caseAnim.visible, 0.25)} className="mb-12 sm:mb-16">
+              <p className="text-[20px] sm:text-[26px] md:text-[32px] font-light text-[#141414] leading-[1.5] tracking-tight max-w-3xl">
+                The last time the world needed a new kind of university, <span className="font-black text-[#8A0000]">Bologna was invented</span>. That was 1088. <span className="font-black">It is time again.</span>
               </p>
             </motion.div>
 
@@ -673,34 +671,7 @@ export default function FundraisingCampaign({ goToPage }: Props) {
             </motion.button>
           </motion.div>
 
-            </div>{/* End LEFT column */}
-
-            {/* RIGHT — Bold Pillar Words Sidebar */}
-            <div className="lg:col-span-3 hidden lg:flex flex-col justify-center items-end">
-              <div className="sticky top-[140px] flex flex-col items-end gap-6">
-                {['PLACE', 'MINDS', 'ACCESS', 'EXCELLENCE', 'HUMAN PROGRESS'].map((word, i) => (
-                  <motion.span
-                    key={i}
-                    initial={{ opacity: 0, x: 30 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.6, delay: 0.3 + i * 0.1 }}
-                    viewport={{ once: true }}
-                    className={`text-[20px] xl:text-[24px] font-black text-[#8A0000] tracking-[0.15em] leading-tight text-right ${word === 'HUMAN PROGRESS' ? 'whitespace-normal' : ''}`}
-                  >
-                    {word === 'HUMAN PROGRESS' ? (
-                      <>
-                        <span className="block">HUMAN</span>
-                        <span className="block">PROGRESS</span>
-                      </>
-                    ) : (
-                      word
-                    )}
-                  </motion.span>
-                ))}
-                <div className="w-12 h-[2px] bg-[#8A0000] mt-4" />
-              </div>
-            </div>
-          </div>{/* End 2-column grid */}
+          </div>{/* End full-width content */}
 
         </div>
       </section>

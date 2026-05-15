@@ -35,8 +35,8 @@ const FIVE_PILLARS = [
   { id: 'p1', title: 'Place', subtitle: 'The 50 Colleges', goal: 82_000_000, pct: 82, icon: Building2, desc: 'A university without a physical place is a YouTube channel. Community requires co-location. Tutorials require rooms. We are not building campuses — we are finding existing buildings and giving them a second life as Colleges. Repurposed convents, warehouses, offices, factories. Each one acquired. Each one owned. Each one permanent.', details: 'Properties are 82 cents of every dollar raised. Even at 50% naming uptake, the gifts cover the property costs. Named gifts are endowments — the property is the asset. Donor names a College; the College owns the building.', color: '#8A0000' },
   { id: 'p2', title: 'Minds', subtitle: 'Faculty Launch', goal: 7_000_000, pct: 7, icon: Users, desc: '2,000 faculty must be hired, onboarded, and in place before students arrive. This pillar covers roughly 3 months of faculty compensation before tuition revenue flows. After Day 1, the P&L covers all faculty compensation from tuition. This is a one-time bridge.', details: 'A $5M Distinguished Professorship at 4.5% yield generates $225K/year — enough to sustain one position in perpetuity. The naming gifts are endowments; the $7M pre-launch cost is the bridge.', color: '#8A0000' },
   { id: 'p3', title: 'Access', subtitle: 'Year 1 Scholarships', goal: 5_000_000, pct: 5, icon: GraduationCap, desc: '$3,000/year is accessible to 90% of qualified students worldwide. The remaining 10% — 10,000 students in Year 1 — need assistance. After Year 1, the $262M annual surplus funds 13,300 scholarships per year. This $5M bridges the first cohort.', details: 'After Year 1, the surplus self-funds scholarships at $40M/year. Your seed gift does not run a programme — it launches a permanent scholarship machine.', color: '#8A0000' },
-  { id: 'p4', title: 'Knowledge', subtitle: 'Centers & Projects Launch', goal: 3_000_000, pct: 3, icon: FlaskConical, desc: '19 Centers of Inquiry and 42 Active Projects need startup capital: research equipment, fieldwork budgets, database subscriptions, publication subsidies, and the open knowledge infrastructure that powers the 7-year release.', details: 'After Year 1, faculty time (already compensated) covers most ongoing project work. This $3M is the seed that makes every Center operational from Day 1.', color: '#8A0000' },
-  { id: 'p5', title: 'Endurance', subtitle: 'Seed Endowment & Reserve', goal: 3_000_000, pct: 3, icon: Landmark, desc: 'The university that outlives its founders needs a corpus that outlives its donors. After Year 1, the surplus builds the endowment at $60M/year. But the first deposit — the seed — comes from the founding campaign. $3M at 4.5% = $135K/year in perpetuity from Day 1.', details: "That's enough to fund 11 full scholarships forever, before any surplus is generated. Founders' Circle gifts are cumulative across all pillars.", color: '#8A0000' },
+  { id: 'p4', title: 'Excellence', subtitle: 'Research & Inquiry', goal: 3_000_000, pct: 3, icon: Star, desc: 'Research seed funds, visiting fellowships, the Artemis Press, Centers of Inquiry. The mechanisms that turn a good university into an inevitable one.', details: '19 Centers of Inquiry and 42 Active Projects need startup capital: research equipment, fieldwork budgets, database subscriptions, publication subsidies, and the open knowledge infrastructure that powers the 7-year release. After Year 1, faculty time (already compensated) covers most ongoing project work. This $3M is the seed that makes every Center operational from Day 1.', color: '#8A0000' },
+  { id: 'p5', title: 'Progress', subtitle: 'Innovation & Infrastructure', goal: 3_000_000, pct: 3, icon: Rocket, desc: 'Innovation labs, the Global Challenge Fund, technology infrastructure. The bridge between scholarship and the world it serves.', details: "The university that outlives its founders needs a corpus that outlives its donors. After Year 1, the surplus builds the endowment at $60M/year. But the first deposit — the seed — comes from the founding campaign. $3M at 4.5% = $135K/year in perpetuity from Day 1. That's enough to fund 11 full scholarships forever, before any surplus is generated. Founders' Circle gifts are cumulative across all pillars.", color: '#8A0000' },
 ];
 
 const PILLAR_FINANCIAL_MODEL = [
@@ -45,8 +45,8 @@ const PILLAR_FINANCIAL_MODEL = [
   { category: 'Hub Pre-Opening (3 months)', amount: 2_000_000, pct: 2, desc: 'Operational costs for college hubs before student occupancy.' },
   { category: 'Legal Incorporation (25 countries)', amount: 2_000_000, pct: 2, desc: 'Legal framework across 25 jurisdictions — the constitutional backbone of a global institution.' },
   { category: 'Scholarship Seed (Year 1)', amount: 5_000_000, pct: 5, desc: 'Seed scholarships for 10,000 students in the first cohort who cannot pay the $3,000 tuition.' },
-  { category: 'Centers & Projects Startup', amount: 3_000_000, pct: 3, desc: 'Startup capital for 19 Centers of Inquiry and 42 Active Projects.' },
-  { category: 'Seed Endowment', amount: 2_000_000, pct: 2, desc: 'The first deposit into the perpetual endowment — $135K/year in perpetuity from Day 1.' },
+  { category: 'Excellence — Centers & Projects Startup', amount: 3_000_000, pct: 3, desc: 'Startup capital for 19 Centers of Inquiry and 42 Active Projects.' },
+  { category: 'Progress — Seed Endowment & Infrastructure', amount: 2_000_000, pct: 2, desc: 'The first deposit into the perpetual endowment — $135K/year in perpetuity from Day 1.' },
   { category: 'IT Infrastructure + Furniture', amount: 2_250_000, pct: 2, desc: 'Digital backbone and physical furnishings for 50 Colleges.' },
 ];
 
@@ -202,7 +202,7 @@ function AnimatedCounter({ value, prefix = '', suffix = '', className = '' }: { 
 
 /* ─── Main Component ─── */
 export default function FundraisingCampaign({ goToPage }: Props) {
-  const activeSection = useActiveSection(['case', 'pillars', 'phases', 'opportunities', 'circles', 'ways', 'give', 'model']);
+  const activeSection = useActiveSection(['case', 'pillars', 'ask', 'phases', 'opportunities', 'circles', 'ways', 'give', 'model']);
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
   const [customAmount, setCustomAmount] = useState('');
   const [donorName, setDonorName] = useState('');
@@ -229,6 +229,7 @@ export default function FundraisingCampaign({ goToPage }: Props) {
   const giveAnim = useInView(0);
   const modelAnim = useInView(0);
   const beyondAnim = useInView(0);
+  const askAnim = useInView(0);
 
   const effectiveAmount = selectedAmount || parseFloat(customAmount) || 0;
 
@@ -280,7 +281,7 @@ export default function FundraisingCampaign({ goToPage }: Props) {
                   The Founding Campaign for the University of Artemis. $100M. 12 months. The kickstart that makes everything else self-sustaining.
                 </p>
                 <p className="text-[13px] sm:text-[15px] text-[#8A0000]/90 font-bold uppercase tracking-[0.15em] mb-6 sm:mb-8">
-                  The campaign is the match. Tuition is the fuel. The fire sustains itself.
+                  $100M. 12 months. The zero-to-one moment for civilization.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <button onClick={() => document.getElementById('give')?.scrollIntoView({ behavior: 'smooth' })} className="flex items-center space-x-3 px-8 py-4 bg-[#8A0000] text-white text-[12px] font-bold uppercase tracking-[0.25em] hover:bg-[#6B0000] transition-colors group">
@@ -451,8 +452,9 @@ export default function FundraisingCampaign({ goToPage }: Props) {
 
       <OnThisPageNav
         sections={[
-          { id: 'case', label: 'The Case' },
+          { id: 'case', label: 'Why Now, Why Us' },
           { id: 'pillars', label: 'Five Pillars' },
+          { id: 'ask', label: 'The Ask' },
           { id: 'phases', label: 'Timeline' },
           { id: 'opportunities', label: 'Naming' },
           { id: 'circles', label: 'Giving Circles' },
@@ -464,72 +466,125 @@ export default function FundraisingCampaign({ goToPage }: Props) {
       />
 
       {/* ══════════════════════════════════════════
-          2. THE CASE — 200 Million
+          2. THE CASE — Why Now, Why Us
           ══════════════════════════════════════════ */}
       <section id="case" className="scroll-mt-[110px] py-16 sm:py-24 lg:py-36">
         <div ref={caseAnim.ref} className="max-w-[1400px] mx-auto w-full px-5 sm:px-8 lg:px-20">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-            {/* LEFT — Big editorial headline + body */}
-            <div className="lg:col-span-7">
-              <motion.h2 {...slideLeft(caseAnim.visible)} className="text-[32px] sm:text-[44px] md:text-[60px] lg:text-[72px] font-black leading-[0.92] tracking-tighter text-[#141414] mb-8 sm:mb-12">
-                200 million<br />
-                <span className="text-[#8A0000]">Why this. Why now. Why you.</span>
-              </motion.h2>
-              <motion.div {...fadeUp(caseAnim.visible, 0.2)} className="space-y-5 text-[16px] text-gray-600 leading-[1.75]">
-                <p>200 million people qualified for university who will never attend. Not because they lack merit. Because the system was designed in a different century for a different species of student.</p>
-                <p>We believe that <em className="text-gray-800">access to world-class education should not depend on where you were born</em>. That <strong className="text-gray-900">academic excellence and global inclusion are not competing values &mdash; they are the same value</strong>. And that a university dedicated to <strong className="text-gray-900">freedom of thought, freedom of inquiry, and freedom of expression</strong> is not merely desirable &mdash; it is necessary for the progress of civilisation itself.</p>
-              </motion.div>
 
-              {/* The Answer in Four Numbers */}
-              <motion.div {...fadeUp(caseAnim.visible, 0.35)} className="mt-10 sm:mt-14 grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
-                {[
-                  { num: '100,000', label: 'Students' },
-                  { num: '50', label: 'Colleges' },
-                  { num: '$3,000', label: 'Per Year' },
-                  { num: '12.4%', label: 'Cost Ratio' },
-                ].map((item, i) => (
-                  <div key={i} className="border-l-2 border-[#8A0000] pl-3 sm:pl-4">
-                    <div className="text-[24px] sm:text-[32px] font-black text-[#8A0000] leading-none">{item.num}</div>
-                    <div className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.2em] text-gray-500 mt-1">{item.label}</div>
+          {/* Section Title */}
+          <motion.h2 {...slideLeft(caseAnim.visible)} className="text-[32px] sm:text-[44px] md:text-[60px] lg:text-[72px] font-black leading-[0.92] tracking-tighter text-[#141414] mb-16 sm:mb-24">
+            Why Now,<br /><span className="text-[#8A0000]">Why Us</span>
+          </motion.h2>
+
+          {/* ── A. The Broken System ── */}
+          <motion.div {...fadeUp(caseAnim.visible, 0.15)} className="mb-16 sm:mb-24">
+            <h3 className="text-[12px] font-bold uppercase tracking-[0.3em] text-[#8A0000] mb-4">The Broken System</h3>
+            <p className="text-[20px] sm:text-[24px] md:text-[28px] font-bold text-[#141414] leading-snug mb-10">
+              The world doesn&rsquo;t have a university problem. It has a <span className="text-[#8A0000]">civilization problem</span>.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+              {[
+                { stat: '$75,000', unit: '/year', desc: 'average tuition at a top-50 global university. A gate, not a door.' },
+                { stat: '1.5%', unit: '', desc: 'the share of the world\'s population with access to a research-class education.' },
+                { stat: '$200B+', unit: '', desc: 'annual global spending on higher ed that still produces degrees employers don\'t trust, graduates who can\'t think across disciplines, and research that never leaves the journal.' },
+                { stat: '177', unit: '', desc: 'countries without a single university in the top 200 global rankings.' },
+              ].map((item, i) => (
+                <motion.div
+                  key={i}
+                  {...fadeUp(caseAnim.visible, 0.2 + i * 0.08)}
+                  className="border border-gray-200 p-6 sm:p-8 bg-white hover:border-[#8A0000]/30 transition-colors"
+                >
+                  <div className="flex items-baseline gap-2 mb-3">
+                    <span className="text-[36px] sm:text-[48px] md:text-[56px] font-black text-[#8A0000] leading-none tracking-tighter">{item.stat}</span>
+                    {item.unit && <span className="text-[14px] sm:text-[16px] font-bold text-[#8A0000]/70">{item.unit}</span>}
                   </div>
-                ))}
-              </motion.div>
-
-              {/* The Ask in One Number */}
-              <motion.div {...fadeUp(caseAnim.visible, 0.45)} className="mt-10 sm:mt-14 p-5 sm:p-8 bg-gray-50 border-l-4 border-[#8A0000]">
-                <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#8A0000] block mb-2">The Ask in One Number</span>
-                <div className="text-[40px] sm:text-[56px] md:text-[72px] font-black text-[#141414] leading-none tracking-tighter">{sym}100M</div>
-                <p className="text-[14px] sm:text-[15px] text-gray-600 leading-relaxed mt-4">Yale&rsquo;s For Humanity campaign raised $7 billion for 14,000 students. That&rsquo;s $500,000 per student. Artemis asks $100 million for 100,000 students. That&rsquo;s $1,000 per student. <strong className="text-[#141414]">Five hundred times more efficient.</strong> Not because we cut corners. Because we cut tradition.</p>
-              </motion.div>
-
-              <motion.button {...fadeUp(caseAnim.visible, 0.55)} onClick={() => document.getElementById('give')?.scrollIntoView({ behavior: 'smooth' })} className="flex items-center space-x-4 py-2 mt-10 border-b-2 border-[#8A0000] text-[#8A0000] text-[12px] font-bold uppercase tracking-[0.2em] hover:text-[#141414] hover:border-[#141414] transition-all group">
-                <span>Support the Campaign</span>
-                <ArrowRight size={14} className="group-hover:translate-x-2 transition-transform" />
-              </motion.button>
+                  <p className="text-[14px] sm:text-[15px] text-gray-600 leading-relaxed">{item.desc}</p>
+                </motion.div>
+              ))}
             </div>
+            <motion.p {...fadeUp(caseAnim.visible, 0.5)} className="mt-8 text-[15px] sm:text-[16px] text-gray-500 leading-[1.8] max-w-3xl">
+              The model is broken. Not because universities lack ambition, but because they lack architecture. They are local institutions in a global age, ivory towers in a flat world, cost centres masquerading as public goods.
+            </motion.p>
+          </motion.div>
 
-            {/* RIGHT — Large typography statements */}
-            <div className="lg:col-span-5">
-              <motion.div {...slideRight(caseAnim.visible, 0.15)} className="space-y-8 sm:space-y-12">
-                <div>
-                  <div className="text-[48px] sm:text-[72px] lg:text-[120px] font-black text-[#8A0000] leading-none tracking-tighter">200M</div>
-                  <div className="flex items-baseline gap-2 sm:gap-3 mt-1">
-                    <span className="text-[11px] sm:text-[13px] font-bold uppercase tracking-[0.2em] text-[#141414]">Missing</span>
-                    <span className="text-[11px] sm:text-[13px] text-gray-400">&mdash;</span>
-                    <span className="text-[11px] sm:text-[13px] text-gray-500">Qualified for university. Never attending.</span>
-                  </div>
-                </div>
-                <div>
-                  <div className="text-[48px] sm:text-[72px] lg:text-[120px] font-black text-[#141414] leading-none tracking-tighter">100K</div>
-                  <div className="flex items-baseline gap-2 sm:gap-3 mt-1">
-                    <span className="text-[11px] sm:text-[13px] font-bold uppercase tracking-[0.2em] text-[#8A0000]">Students</span>
-                    <span className="text-[11px] sm:text-[13px] text-gray-400">&mdash;</span>
-                    <span className="text-[11px] sm:text-[13px] text-gray-500">In Year 1 alone. Across 35 countries.</span>
-                  </div>
-                </div>
-              </motion.div>
+          {/* ── B. Why We're Different ── */}
+          <motion.div {...fadeUp(caseAnim.visible, 0.3)} className="mb-16 sm:mb-24">
+            <h3 className="text-[12px] font-bold uppercase tracking-[0.3em] text-[#8A0000] mb-4">Why We&rsquo;re Different</h3>
+            <p className="text-[20px] sm:text-[24px] md:text-[28px] font-bold text-[#141414] leading-snug mb-10">
+              Artemis is not a new university. It is a <span className="text-[#8A0000]">new species</span> of university.
+            </p>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+              {[
+                {
+                  num: '01',
+                  text: 'We don\'t have one campus. We have 50 Colleges — each a living, breathing academic community — distributed across 35 countries on 6 continents. Our students don\'t relocate to knowledge; knowledge relocates to them.',
+                  highlight: '50 Colleges across 35 countries'
+                },
+                {
+                  num: '02',
+                  text: 'We don\'t charge what the market will bear. We charge what the mission demands: $3,000 per year — less than 4% of the cost at our peer institutions. Not because we\'re cheap. Because we\'re designed to be affordable.',
+                  highlight: '$3,000/year tuition'
+                },
+                {
+                  num: '03',
+                  text: 'We don\'t borrow prestige. We build it — through a consortium with the University of London (primary), Bologna, Sciences Po, Ca\' Foscari, and UCT, institutions that have been defining civilization\'s intellectual frontier for centuries.',
+                  highlight: 'Consortium-built prestige'
+                },
+              ].map((item, i) => (
+                <motion.div
+                  key={i}
+                  {...fadeUp(caseAnim.visible, 0.35 + i * 0.1)}
+                  className="relative border-t-2 border-[#8A0000] pt-6 sm:pt-8"
+                >
+                  <span className="text-[48px] sm:text-[64px] font-black text-[#8A0000]/10 leading-none absolute top-0 right-0">{item.num}</span>
+                  <span className="inline-block text-[10px] font-bold uppercase tracking-[0.25em] text-[#8A0000] mb-4 bg-[#8A0000]/5 px-3 py-1">{item.highlight}</span>
+                  <p className="text-[15px] sm:text-[16px] text-gray-700 leading-[1.75]"><strong className="text-[#141414]">{item.text.split('.')[0]}.</strong>{item.text.substring(item.text.indexOf('.') + 1)}</p>
+                </motion.div>
+              ))}
             </div>
-          </div>
+          </motion.div>
+
+          {/* ── C. The First Principles ── */}
+          <motion.div {...fadeUp(caseAnim.visible, 0.45)}>
+            <h3 className="text-[12px] font-bold uppercase tracking-[0.3em] text-[#8A0000] mb-4">The First Principles</h3>
+            <p className="text-[20px] sm:text-[24px] md:text-[28px] font-bold text-[#141414] leading-snug mb-10">
+              Our financial architecture isn&rsquo;t charity. It&rsquo;s <span className="text-[#8A0000]">engineering</span>.
+            </p>
+
+            {/* Financial Statement Table */}
+            <motion.div {...fadeUp(caseAnim.visible, 0.55)} className="border border-gray-200 bg-white mb-8">
+              <div className="grid grid-cols-3 gap-0 text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400 border-b border-gray-200 px-6 py-4">
+                <span>Component</span>
+                <span className="text-right">Value</span>
+                <span className="text-right">Notes</span>
+              </div>
+              {[
+                { component: 'Students at $3,000/yr', value: '100,000', note: '$300M annual revenue' },
+                { component: 'Faculty (UN Model 3)', value: '2,000', note: 'Competitive, global-class pay' },
+                { component: 'Operating Expenditure', value: '$37.89M', note: '12.4% of revenue' },
+                { component: 'Annual Surplus', value: '$262M+', note: 'Reinvested — endowment, expansion, access' },
+              ].map((row, i) => (
+                <div key={i} className={`grid grid-cols-3 gap-0 px-6 py-5 ${i < 3 ? 'border-b border-gray-100' : 'bg-[#8A0000]/[0.03]'}`}>
+                  <span className="text-[14px] sm:text-[15px] font-semibold text-[#141414]">{row.component}</span>
+                  <span className="text-[14px] sm:text-[15px] font-black text-[#8A0000] text-right tabular-nums">{row.value}</span>
+                  <span className="text-[13px] sm:text-[14px] text-gray-500 text-right">{row.note}</span>
+                </div>
+              ))}
+            </motion.div>
+
+            <motion.p {...fadeUp(caseAnim.visible, 0.6)} className="text-[15px] sm:text-[16px] text-gray-500 leading-[1.8] max-w-3xl mb-6">
+              This isn&rsquo;t a projection. It&rsquo;s arithmetic. The Oxford collegiate model, scaled globally, with digital-first infrastructure, produces a university that is self-sustaining from Year 1 — and generative forever after.
+            </motion.p>
+            <motion.p {...fadeUp(caseAnim.visible, 0.65)} className="text-[18px] sm:text-[20px] md:text-[22px] font-black text-[#141414] leading-snug max-w-2xl">
+              Every dollar given to the founding campaign doesn&rsquo;t plug a hole. It builds the foundation that makes the hole <span className="text-[#8A0000]">impossible</span>.
+            </motion.p>
+
+            <motion.button {...fadeUp(caseAnim.visible, 0.7)} onClick={() => document.getElementById('give')?.scrollIntoView({ behavior: 'smooth' })} className="flex items-center space-x-4 py-2 mt-10 border-b-2 border-[#8A0000] text-[#8A0000] text-[12px] font-bold uppercase tracking-[0.2em] hover:text-[#141414] hover:border-[#141414] transition-all group">
+              <span>Support the Campaign</span>
+              <ArrowRight size={14} className="group-hover:translate-x-2 transition-transform" />
+            </motion.button>
+          </motion.div>
+
         </div>
       </section>
 
@@ -633,6 +688,37 @@ export default function FundraisingCampaign({ goToPage }: Props) {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
+          THE ASK
+          ══════════════════════════════════════════ */}
+      <section id="ask" className="scroll-mt-[110px] bg-[#8A0000] py-16 sm:py-24 lg:py-36">
+        <div ref={askAnim.ref} className="max-w-[1400px] mx-auto w-full px-5 sm:px-8 lg:px-20 text-center">
+          <motion.div {...fadeUp(askAnim.visible)} className="max-w-3xl mx-auto">
+            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/50 block mb-6">The Ask</span>
+            <h2 className="text-[36px] sm:text-[52px] md:text-[72px] lg:text-[88px] font-black leading-[0.9] tracking-tighter text-white mb-6">
+              $100 million.<br />12 months.<br />For Civilization.
+            </h2>
+            <p className="text-[16px] sm:text-[18px] text-white/70 leading-relaxed max-w-2xl mx-auto mb-8">
+              This is the founding campaign. Not an annual fund. Not a capital drive. The zero-to-one moment — the moment a university that should have existed for centuries finally does.
+            </p>
+            <p className="text-[15px] sm:text-[17px] text-white/80 leading-relaxed max-w-2xl mx-auto mb-10">
+              After this, Artemis is self-sustaining. Forever. Every student who walks through our doors, every paper our faculty publishes, every community our Colleges anchor — all of it funded by the model itself.
+            </p>
+            <div className="border-t border-white/20 pt-8 max-w-xl mx-auto">
+              <p className="text-[20px] sm:text-[24px] md:text-[28px] font-black text-white tracking-tight leading-tight">
+                You&apos;re not giving to a university.<br />You&apos;re founding one.
+              </p>
+            </div>
+            <div className="mt-10">
+              <button onClick={() => document.getElementById('give')?.scrollIntoView({ behavior: 'smooth' })} className="inline-flex items-center space-x-3 px-10 py-5 bg-white text-[#8A0000] text-[12px] font-bold uppercase tracking-[0.25em] hover:bg-gray-100 transition-colors group">
+                <span>Give Now</span>
+                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
+          </motion.div>
         </div>
       </section>
 

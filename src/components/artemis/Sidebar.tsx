@@ -31,6 +31,45 @@ export default function Sidebar({ isOpen, onClose, goHome, goToPage, hideDesktop
            <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded text-gray-500"><X size={20}/></button>
         </div>
 
+        {/* ── Mobile Section Navigation ── */}
+        <div className="lg:hidden mb-8 border-b border-gray-100 pb-6">
+          <h3 className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#8A0000] mb-3">Navigate</h3>
+          <nav className="space-y-0">
+            {[
+              { label: 'Education', page: 'education' },
+              { label: 'Research', page: 'research' },
+              { label: 'Innovation', page: 'innovation' },
+              { label: 'Admissions + Aid', page: 'admissions' },
+              { label: 'Campus Life', page: 'campus' },
+              { label: 'Colleges', page: 'colleges' },
+              { label: 'About Artemis', page: 'about' },
+              { label: 'Journal', page: 'blog' },
+            ].map((item) => (
+              <button
+                key={item.page}
+                onClick={() => { goToPage(item.page); onClose?.(); }}
+                className="block w-full text-left text-[15px] font-bold text-[#141414] py-2.5 hover:text-[#8A0000] hover:pl-1 transition-all"
+              >
+                {item.label}
+              </button>
+            ))}
+          </nav>
+          <div className="flex gap-3 mt-4 pt-4 border-t border-gray-100">
+            <button
+              onClick={() => { goToPage('fundraising'); onClose?.(); }}
+              className="flex-1 py-2.5 border border-[#8A0000] text-[#8A0000] text-[12px] font-bold uppercase tracking-wider hover:bg-[#8A0000] hover:text-white transition-colors text-center"
+            >
+              Give
+            </button>
+            <button
+              onClick={() => { goToPage('apply'); onClose?.(); }}
+              className="flex-1 py-2.5 bg-[#8A0000] text-white text-[12px] font-bold uppercase tracking-wider hover:bg-[#6B0000] transition-colors text-center"
+            >
+              Apply
+            </button>
+          </div>
+        </div>
+
         <div className="mb-10 relative">
           <h3 className="text-[14px] font-bold mb-4">Explore websites, people, and locations</h3>
           <div className="bg-[#F3F3F3] p-3 flex items-center focus-within:bg-white focus-within:ring-1 focus-within:ring-[#8A0000] transition-all">

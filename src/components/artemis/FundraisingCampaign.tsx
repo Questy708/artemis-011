@@ -471,10 +471,10 @@ export default function FundraisingCampaign({ goToPage }: Props) {
             <p className="text-[20px] sm:text-[24px] md:text-[28px] font-bold text-[#141414] leading-snug mb-6">
               The world doesn&rsquo;t have a university problem.<br />It has a <span className="text-[#8A0000]">civilization problem</span>.
             </p>
-            <p className="text-[15px] sm:text-[17px] text-gray-600 leading-[1.8] max-w-3xl mb-4">
+            <p className="text-[15px] sm:text-[17px] text-gray-600 leading-[1.8] mb-4">
               The modern university was designed for a world that no longer exists. It was built to serve the industrial economy &mdash; to sort workers into fixed career tracks, to certify competencies that lasted a lifetime, to produce specialists for a stable and predictable labour market. That world is gone. The institutions remain, like factories without a product, certifying skills that machines now perform better and cheaper.
             </p>
-            <p className="text-[15px] sm:text-[17px] text-gray-600 leading-[1.8] max-w-3xl mb-10">
+            <p className="text-[15px] sm:text-[17px] text-gray-600 leading-[1.8] mb-10">
               This is not a problem that can be solved by reforming existing institutions. You cannot retrofit a cathedral into a spacecraft. The university of 2026 cannot be built by adding AI modules to a curriculum designed in 1926. The architecture itself &mdash; centralised, exclusionary, disciplinary, slow &mdash; is the problem. Not the people in it. Not even the ideas. The <strong className="text-[#141414]">structure</strong>.
             </p>
 
@@ -566,7 +566,7 @@ export default function FundraisingCampaign({ goToPage }: Props) {
           <motion.div {...fadeUp(caseAnim.visible, 0.3)} className="mb-20 sm:mb-28">
             {/* Thematic Statement */}
             <motion.div {...fadeUp(caseAnim.visible, 0.25)} className="mb-12 sm:mb-16">
-              <p className="text-[20px] sm:text-[26px] md:text-[32px] font-light text-[#141414] leading-[1.5] tracking-tight max-w-3xl">
+              <p className="text-[20px] sm:text-[26px] md:text-[32px] font-light text-[#141414] leading-[1.5] tracking-tight">
                 The last time the world needed a new kind of university, <span className="font-black text-[#8A0000]">Bologna was invented</span>. That was 1088. <span className="font-black">It is time again.</span>
               </p>
             </motion.div>
@@ -658,10 +658,10 @@ export default function FundraisingCampaign({ goToPage }: Props) {
               ))}
             </motion.div>
 
-            <motion.p {...fadeUp(caseAnim.visible, 0.6)} className="text-[15px] sm:text-[16px] text-gray-500 leading-[1.8] max-w-3xl mb-6">
+            <motion.p {...fadeUp(caseAnim.visible, 0.6)} className="text-[15px] sm:text-[16px] text-gray-500 leading-[1.8] mb-6">
               This isn&rsquo;t a projection. It&rsquo;s arithmetic. The Oxford collegiate model, scaled globally, with digital-first infrastructure, produces a university that is self-sustaining from Year 1 — and generative forever after.
             </motion.p>
-            <motion.p {...fadeUp(caseAnim.visible, 0.65)} className="text-[18px] sm:text-[20px] md:text-[22px] font-black text-[#141414] leading-snug max-w-2xl">
+            <motion.p {...fadeUp(caseAnim.visible, 0.65)} className="text-[18px] sm:text-[20px] md:text-[22px] font-black text-[#141414] leading-snug">
               Every dollar given to the founding campaign doesn&rsquo;t plug a hole. It builds the foundation that makes the hole <span className="text-[#8A0000]">impossible</span>.
             </motion.p>
 

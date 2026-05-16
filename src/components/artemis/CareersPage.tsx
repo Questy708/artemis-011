@@ -3,12 +3,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import SubPageFooter from '@/components/artemis/SubPageFooter';
 import OnThisPageNav, { useActiveSection } from '@/components/artemis/OnThisPageNav';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowRight, MapPin, Building2, Users, BookOpen,
   FlaskConical, Globe, Shield, Star, Crown, Mail,
   Scale, Brain, Cpu, GraduationCap, Briefcase,
-  Gavel, Stethoscope, Atom, Search, Filter, X, ChevronDown
+  Gavel, Stethoscope, Atom, Search, Filter, X, ChevronDown,
+  Clock, UsersRound, ArrowUpRight
 } from 'lucide-react';
 
 interface Props {
@@ -299,12 +300,22 @@ const BENEFITS = [
   { icon: Briefcase, title: 'Lean operations', desc: 'No bureaucracy. No committees. No deans who don\'t teach. Just scholars, students, and a mission.' },
 ];
 
+/* ─── Rank badge color helper ─── */
+function rankColor(rank: string) {
+  if (rank === 'Distinguished Professor') return { bg: 'bg-[#8A0000]', text: 'text-white' };
+  if (rank === 'Professor') return { bg: 'bg-[#6B0000]', text: 'text-white' };
+  if (rank === 'Associate Professor') return { bg: 'bg-[#4a0e0e]', text: 'text-white' };
+  if (rank === 'Assistant Professor') return { bg: 'bg-[#8A0000]/10', text: 'text-[#8A0000]' };
+  return { bg: 'bg-gray-100', text: 'text-gray-600' };
+}
+
 /* ─── Main Component ─── */
 export default function CareersPage({ goToPage }: Props) {
   const activeSection = useActiveSection(['positions', 'compensation', 'divisions', 'locations', 'benefits', 'apply']);
   const [divisionFilter, setDivisionFilter] = useState<string>('all');
-  const [expandedJob, setExpandedJob] = useState<string | null>(null);
+  const [selectedJob, setSelectedJob] = useState<string>(JOB_LISTINGS[0].id);
   const [searchQuery, setSearchQuery] = useState('');
+  const [mobileDetail, setMobileDetail] = useState<string | null>(null);
 
   const heroAnim = useInView(0);
   const posAnim = useInView(0);
@@ -322,6 +333,8 @@ export default function CareersPage({ goToPage }: Props) {
       job.description.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesDivision && matchesSearch;
   });
+
+  const activeJob = JOB_LISTINGS.find(j => j.id === selectedJob) || JOB_LISTINGS[0];
 
   return (
     <div className="flex flex-col bg-white w-full">
@@ -348,7 +361,7 @@ export default function CareersPage({ goToPage }: Props) {
                   Work at Artemis
                 </h1>
                 <p className="text-[18px] text-white/70 max-w-xl leading-relaxed font-light">
-                  You are not applying for a job. You are answering a call.
+                  Faculty positions across five divisions. A university built from first principles.
                 </p>
               </div>
             </div>
@@ -369,11 +382,11 @@ export default function CareersPage({ goToPage }: Props) {
       />
 
       {/* ══════════════════════════════════════════
-          2. OPEN POSITIONS — Job Board
+          2. OPEN POSITIONS — Split-View Job Board
           ══════════════════════════════════════════ */}
       <section id="positions" className="scroll-mt-[110px] w-full bg-white">
         <div ref={posAnim.ref} className="max-w-[1400px] mx-auto px-5 sm:px-8 lg:px-20 py-16 lg:py-24">
-          {/* Section divider */}
+          {/* Section header */}
           <div className="mb-6 flex items-center space-x-3">
             <span className="w-8 h-[1px] bg-[#8A0000]"></span>
             <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#8A0000]">Open Positions</span>
@@ -426,35 +439,153 @@ export default function CareersPage({ goToPage }: Props) {
             {filteredJobs.length} position{filteredJobs.length !== 1 ? 's' : ''} found
           </div>
 
-          {/* Job listings */}
-          <div className="space-y-0 border-t border-gray-200">
-            {filteredJobs.map((job) => {
-              const isExpanded = expandedJob === job.id;
-              return (
-                <div key={job.id} className="border-b border-gray-200">
+          {/* ═══ SPLIT VIEW: List + Detail ═══ */}
+          {/* Desktop layout */}
+          <div className="hidden lg:grid lg:grid-cols-12 gap-0 border border-gray-200">
+            {/* LEFT — Job List */}
+            <div className="col-span-5 border-r border-gray-200 max-h-[820px] overflow-y-auto">
+              {filteredJobs.map((job) => {
+                const isActive = selectedJob === job.id;
+                const rc = rankColor(job.rank);
+                return (
                   <button
-                    onClick={() => setExpandedJob(isExpanded ? null : job.id)}
-                    className="w-full text-left py-6 sm:py-8 group"
+                    key={job.id}
+                    onClick={() => setSelectedJob(job.id)}
+                    className={`w-full text-left p-6 border-b border-gray-100 transition-all group ${isActive ? 'bg-[#8A0000]/[0.03] border-l-2 border-l-[#8A0000]' : 'border-l-2 border-l-transparent hover:bg-gray-50'}`}
                   >
-                    <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-start justify-between gap-3">
                       <div className="flex-1 min-w-0">
                         <div className="flex flex-wrap items-center gap-2 mb-2">
-                          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#8A0000] bg-[#8A0000]/5 px-2 py-0.5">{job.rank}</span>
-                          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">{job.type}</span>
+                          <span className={`text-[9px] font-bold uppercase tracking-[0.2em] px-2 py-0.5 ${rc.bg} ${rc.text}`}>{job.rank}</span>
                           {job.open > 1 && (
-                            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#8A0000]">{job.open} openings</span>
+                            <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#8A0000]">{job.open} openings</span>
                           )}
                         </div>
-                        <h3 className="text-[17px] sm:text-[20px] font-bold text-[#141414] group-hover:text-[#8A0000] transition-colors leading-tight">
+                        <h3 className={`text-[15px] font-bold leading-snug mb-1.5 ${isActive ? 'text-[#8A0000]' : 'text-[#141414] group-hover:text-[#8A0000]'} transition-colors`}>
                           {job.title}
                         </h3>
-                        <div className="flex flex-wrap items-center gap-3 mt-2 text-[13px] text-gray-500">
-                          <span className="flex items-center gap-1"><MapPin size={13} /> {job.locations.slice(0, 3).join(', ')}{job.locations.length > 3 ? '...' : ''}</span>
-                          <span className="flex items-center gap-1"><Briefcase size={13} /> {job.stipend}</span>
+                        <div className="flex flex-wrap items-center gap-3 text-[12px] text-gray-500">
+                          <span className="flex items-center gap-1"><MapPin size={11} /> {job.locations.slice(0, 2).join(', ')}</span>
+                          <span className="flex items-center gap-1"><Briefcase size={11} /> {job.stipend}</span>
+                        </div>
+                      </div>
+                      <ArrowUpRight size={14} className={`shrink-0 mt-1 transition-colors ${isActive ? 'text-[#8A0000]' : 'text-gray-300 group-hover:text-[#8A0000]'}`} />
+                    </div>
+                  </button>
+                );
+              })}
+              {filteredJobs.length === 0 && (
+                <div className="p-12 text-center">
+                  <p className="text-[15px] text-gray-400">No positions match your search.</p>
+                </div>
+              )}
+            </div>
+
+            {/* RIGHT — Job Detail */}
+            <div className="col-span-7 p-8 sm:p-10 max-h-[820px] overflow-y-auto">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeJob.id}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -12 }}
+                  transition={{ duration: 0.25, ease: 'easeOut' }}
+                >
+                  {/* Detail header */}
+                  <div className="mb-8 pb-6 border-b border-gray-100">
+                    <div className="flex flex-wrap items-center gap-2 mb-3">
+                      <span className={`text-[9px] font-bold uppercase tracking-[0.2em] px-2.5 py-1 ${rankColor(activeJob.rank).bg} ${rankColor(activeJob.rank).text}`}>{activeJob.rank}</span>
+                      <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">{activeJob.type}</span>
+                      {activeJob.open > 1 && (
+                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#8A0000] bg-[#8A0000]/5 px-2 py-0.5">{activeJob.open} openings</span>
+                      )}
+                    </div>
+                    <h3 className="text-[22px] sm:text-[26px] font-extrabold text-[#141414] leading-tight mb-3">
+                      {activeJob.title}
+                    </h3>
+                    <div className="flex flex-wrap items-center gap-4 text-[13px] text-gray-500">
+                      <span className="flex items-center gap-1.5"><MapPin size={13} /> {activeJob.locations.join(', ')}</span>
+                      <span className="flex items-center gap-1.5"><Briefcase size={13} /> {activeJob.stipend}</span>
+                      <span className="flex items-center gap-1.5"><UsersRound size={13} /> Reports to {activeJob.reports}</span>
+                    </div>
+                  </div>
+
+                  {/* Description */}
+                  <p className="text-[15px] sm:text-[16px] leading-[1.8] text-gray-600 mb-8">{activeJob.description}</p>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {/* Responsibilities */}
+                    <div>
+                      <h4 className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#8A0000] mb-4">Key Responsibilities</h4>
+                      <ul className="space-y-3">
+                        {activeJob.responsibilities.map((r, i) => (
+                          <li key={i} className="flex items-start gap-3">
+                            <span className="w-1.5 h-1.5 bg-[#8A0000] rounded-full shrink-0 mt-2"></span>
+                            <span className="text-[13px] sm:text-[14px] text-gray-600 leading-[1.6]">{r}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Requirements */}
+                    <div>
+                      <h4 className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#8A0000] mb-4">Qualifications</h4>
+                      <ul className="space-y-3">
+                        {activeJob.requirements.map((r, i) => (
+                          <li key={i} className="flex items-start gap-3">
+                            <span className="w-1.5 h-1.5 bg-gray-300 rounded-full shrink-0 mt-2"></span>
+                            <span className="text-[13px] sm:text-[14px] text-gray-600 leading-[1.6]">{r}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+
+                  {/* Apply CTA */}
+                  <div className="mt-10 pt-6 border-t border-gray-100">
+                    <a
+                      href={`mailto:faculty@artemis.edu?subject=Application: ${activeJob.title}`}
+                      className="inline-flex items-center gap-3 px-8 py-4 bg-[#8A0000] text-white text-[12px] font-bold uppercase tracking-[0.25em] hover:bg-[#6B0000] transition-colors group"
+                    >
+                      <span>Apply Now</span>
+                      <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                    </a>
+                    <p className="text-[12px] text-gray-400 mt-3">Send your manifesto to faculty@artemis.edu</p>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </div>
+
+          {/* ═══ MOBILE layout — card list with expand ═══ */}
+          <div className="lg:hidden space-y-3">
+            {filteredJobs.map((job) => {
+              const isExpanded = mobileDetail === job.id;
+              const rc = rankColor(job.rank);
+              return (
+                <div key={job.id} className="border border-gray-200">
+                  <button
+                    onClick={() => setMobileDetail(isExpanded ? null : job.id)}
+                    className="w-full text-left p-5 group"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-wrap items-center gap-2 mb-2">
+                          <span className={`text-[9px] font-bold uppercase tracking-[0.2em] px-2 py-0.5 ${rc.bg} ${rc.text}`}>{job.rank}</span>
+                          {job.open > 1 && (
+                            <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#8A0000]">{job.open} openings</span>
+                          )}
+                        </div>
+                        <h3 className="text-[15px] font-bold text-[#141414] group-hover:text-[#8A0000] transition-colors leading-snug mb-1">
+                          {job.title}
+                        </h3>
+                        <div className="flex flex-wrap items-center gap-3 text-[12px] text-gray-500">
+                          <span className="flex items-center gap-1"><MapPin size={11} /> {job.locations.slice(0, 2).join(', ')}</span>
+                          <span className="flex items-center gap-1"><Briefcase size={11} /> {job.stipend}</span>
                         </div>
                       </div>
                       <svg
-                        className={`w-5 h-5 text-gray-400 shrink-0 mt-2 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
+                        className={`w-4 h-4 text-gray-400 shrink-0 mt-1 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
                         fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}
                       >
                         <polyline points="6 9 12 15 18 9" />
@@ -466,51 +597,43 @@ export default function CareersPage({ goToPage }: Props) {
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
-                      transition={{ duration: 0.3, ease: 'easeOut' }}
+                      transition={{ duration: 0.25, ease: 'easeOut' }}
                       className="overflow-hidden"
                     >
-                      <div className="pb-8 sm:pb-10">
-                        {/* Description */}
-                        <p className="text-[15px] sm:text-[16px] leading-[1.8] text-gray-600 mb-8 max-w-4xl">{job.description}</p>
-
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-                          {/* Responsibilities */}
+                      <div className="px-5 pb-6 pt-0 border-t border-gray-100">
+                        <p className="text-[14px] leading-[1.8] text-gray-600 mt-5 mb-6">{job.description}</p>
+                        <div className="space-y-5">
                           <div>
-                            <h4 className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#8A0000] mb-4">Key Responsibilities</h4>
-                            <ul className="space-y-3">
+                            <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#8A0000] mb-3">Key Responsibilities</h4>
+                            <ul className="space-y-2">
                               {job.responsibilities.map((r, i) => (
-                                <li key={i} className="flex items-start gap-3">
-                                  <span className="w-1.5 h-1.5 bg-[#8A0000] rounded-full shrink-0 mt-2"></span>
-                                  <span className="text-[14px] text-gray-600 leading-[1.6]">{r}</span>
+                                <li key={i} className="flex items-start gap-2.5">
+                                  <span className="w-1.5 h-1.5 bg-[#8A0000] rounded-full shrink-0 mt-1.5"></span>
+                                  <span className="text-[13px] text-gray-600 leading-[1.5]">{r}</span>
                                 </li>
                               ))}
                             </ul>
                           </div>
-
-                          {/* Requirements */}
                           <div>
-                            <h4 className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#8A0000] mb-4">Qualifications</h4>
-                            <ul className="space-y-3">
+                            <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#8A0000] mb-3">Qualifications</h4>
+                            <ul className="space-y-2">
                               {job.requirements.map((r, i) => (
-                                <li key={i} className="flex items-start gap-3">
-                                  <span className="w-1.5 h-1.5 bg-gray-300 rounded-full shrink-0 mt-2"></span>
-                                  <span className="text-[14px] text-gray-600 leading-[1.6]">{r}</span>
+                                <li key={i} className="flex items-start gap-2.5">
+                                  <span className="w-1.5 h-1.5 bg-gray-300 rounded-full shrink-0 mt-1.5"></span>
+                                  <span className="text-[13px] text-gray-600 leading-[1.5]">{r}</span>
                                 </li>
                               ))}
                             </ul>
-
-                            {/* Apply CTA */}
-                            <div className="mt-8 pt-6 border-t border-gray-100">
-                              <a
-                                href="mailto:faculty@artemis.edu?subject=Application: {job.title}"
-                                className="inline-flex items-center gap-3 px-8 py-4 bg-[#8A0000] text-white text-[12px] font-bold uppercase tracking-[0.25em] hover:bg-[#6B0000] transition-colors group"
-                              >
-                                <span>Apply Now</span>
-                                <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                              </a>
-                              <p className="text-[12px] text-gray-400 mt-3">Send your manifesto to faculty@artemis.edu</p>
-                            </div>
                           </div>
+                        </div>
+                        <div className="mt-6 pt-5 border-t border-gray-100">
+                          <a
+                            href={`mailto:faculty@artemis.edu?subject=Application: ${job.title}`}
+                            className="inline-flex items-center gap-2 px-6 py-3 bg-[#8A0000] text-white text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-[#6B0000] transition-colors group"
+                          >
+                            <span>Apply Now</span>
+                            <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
+                          </a>
                         </div>
                       </div>
                     </motion.div>
@@ -518,10 +641,9 @@ export default function CareersPage({ goToPage }: Props) {
                 </div>
               );
             })}
-
             {filteredJobs.length === 0 && (
-              <div className="py-16 text-center">
-                <p className="text-[16px] text-gray-400">No positions match your search. Try a different filter or query.</p>
+              <div className="py-12 text-center border border-gray-200">
+                <p className="text-[15px] text-gray-400">No positions match your search.</p>
               </div>
             )}
           </div>
@@ -529,73 +651,81 @@ export default function CareersPage({ goToPage }: Props) {
       </section>
 
       {/* ══════════════════════════════════════════
-          3. COMPENSATION
+          3. COMPENSATION — Full-bleed parallax image + white card
           ══════════════════════════════════════════ */}
-      <section id="compensation" className="scroll-mt-[110px] w-full bg-gray-50 border-y border-gray-100">
-        <div ref={compAnim.ref} className="max-w-[1400px] mx-auto px-5 sm:px-8 lg:px-20 py-16 lg:py-24">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
-            {/* Left — Text */}
-            <div>
-              <div className="mb-6 flex items-center space-x-3">
-                <span className="w-8 h-[1px] bg-[#8A0000]"></span>
-                <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#8A0000]">Compensation</span>
+      <section id="compensation" className="scroll-mt-[110px] w-full">
+        <div className="max-w-[1600px] mx-auto">
+          <div ref={compAnim.ref} className="relative w-full min-h-[420px] overflow-hidden">
+            <img
+              src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&q=80&w=1800"
+              alt="Compensation"
+              className="absolute inset-0 w-full h-full object-cover grayscale"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent" />
+            <div className="relative z-10 flex items-end h-full max-w-[1400px] mx-auto w-full px-5 sm:px-8 lg:px-20 py-10 lg:py-14">
+              <div className={`transition-all duration-700 ${compAnim.visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+                <div className="bg-white max-w-xl p-6 sm:p-8 lg:p-10 shadow-xl">
+                  <div className="mb-4 flex items-center space-x-3">
+                    <span className="w-8 h-[1px] bg-[#8A0000]"></span>
+                    <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#8A0000]">Compensation</span>
+                  </div>
+                  <h2 className="text-[24px] sm:text-[32px] lg:text-[38px] font-extrabold leading-[1.05] tracking-tighter text-[#141414] mb-4">
+                    The Deal
+                  </h2>
+                  <p className="text-[15px] text-gray-600 leading-[1.75] mb-4">
+                    <span className="font-bold text-[#141414]">Years 1–5: Survival Stipends.</span> UN Model 3 compensation — a base stipend with a location multiplier.
+                  </p>
+                  <p className="text-[15px] text-gray-600 leading-[1.75] mb-5">
+                    <span className="font-bold text-[#141414]">Year 6+: Career Compensation.</span> The Y6+ Quality Upgrade Fund transitions all faculty from survival to career-level pay.
+                  </p>
+                  <div className="border-l-4 border-[#8A0000] pl-4 py-1">
+                    <p className="text-[13px] text-gray-500 italic leading-[1.6]">
+                      A fellowship stipend, not an employment contract. Designed so you can survive and do your best work.
+                    </p>
+                  </div>
+                </div>
               </div>
-              <h2 className="text-[28px] sm:text-[38px] lg:text-[46px] font-extrabold leading-[1.05] tracking-tighter text-[#141414] mb-6">
-                The Deal
-              </h2>
-              <p className="text-[17px] text-gray-600 leading-[1.75] mb-6">
-                We will be honest with you, because we cannot afford to be anything else.
-              </p>
-              <p className="text-[17px] text-gray-600 leading-[1.75] mb-4">
-                <span className="font-bold text-[#141414]">Years 1–5: Survival Stipends.</span> UN Model 3 compensation — a base stipend with a location multiplier. Housing, meals, health insurance, transport — you pay yourself from the stipend.
-              </p>
-              <p className="text-[17px] text-gray-600 leading-[1.75] mb-8">
-                <span className="font-bold text-[#141414]">Year 6+: Career Compensation.</span> The Y6+ Quality Upgrade Fund transitions all faculty from survival to career-level pay. This is not a promise — it is built into the financial architecture.
-              </p>
-              <div className="border-l-4 border-[#8A0000] pl-6 py-2">
-                <p className="text-[15px] text-gray-500 italic leading-[1.7]">
-                  This is a fellowship stipend, not an employment contract. It is designed so you can survive and do your best work. It is not designed to be comfortable. Comfort is what Year 6 is for.
-                </p>
-              </div>
-            </div>
-
-            {/* Right — Compensation Table */}
-            <div className="bg-white border border-gray-200 p-6 sm:p-8">
-              <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#8A0000] mb-6">Stipend Schedule (USD)</h3>
-              <div className="overflow-x-auto">
-                <table className="w-full min-w-[440px]">
-                  <thead>
-                    <tr className="border-b-2 border-[#8A0000]">
-                      <th className="text-left text-[10px] font-black uppercase tracking-[0.15em] text-[#8A0000] py-3 pr-3">Title</th>
-                      <th className="text-right text-[10px] font-black uppercase tracking-[0.15em] text-[#8A0000] py-3 px-3">Base</th>
-                      <th className="text-right text-[10px] font-black uppercase tracking-[0.15em] text-[#8A0000] py-3 px-3">London</th>
-                      <th className="text-right text-[10px] font-black uppercase tracking-[0.15em] text-[#8A0000] py-3 px-3">Nairobi</th>
-                      <th className="text-right text-[10px] font-black uppercase tracking-[0.15em] text-[#8A0000] py-3 pl-3">Kampala</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {COMPENSATION_TABLE.map((row, i) => (
-                      <tr key={i} className="border-b border-gray-100">
-                        <td className="py-3.5 pr-3 text-[12px] sm:text-[13px] font-semibold text-[#141414]">{row.title}</td>
-                        <td className="py-3.5 px-3 text-[12px] sm:text-[13px] text-right font-bold text-[#141414]">{row.base}</td>
-                        <td className="py-3.5 px-3 text-[12px] sm:text-[13px] text-right text-gray-600">{row.london}</td>
-                        <td className="py-3.5 px-3 text-[12px] sm:text-[13px] text-right text-gray-600">{row.nairobi}</td>
-                        <td className="py-3.5 pl-3 text-[12px] sm:text-[13px] text-right text-gray-600">{row.kampala}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <p className="text-[11px] text-gray-400 mt-4">Location multipliers follow the UN post-adjustment system (Model 3).</p>
             </div>
           </div>
         </div>
       </section>
 
+      {/* Compensation Table — separate section below the parallax */}
+      <section className="w-full bg-white border-b border-gray-100">
+        <div className="max-w-[1400px] mx-auto px-5 sm:px-8 lg:px-20 py-12 lg:py-16">
+          <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#8A0000] mb-6">Stipend Schedule (USD)</h3>
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[440px]">
+              <thead>
+                <tr className="border-b-2 border-[#8A0000]">
+                  <th className="text-left text-[10px] font-black uppercase tracking-[0.15em] text-[#8A0000] py-3 pr-3">Title</th>
+                  <th className="text-right text-[10px] font-black uppercase tracking-[0.15em] text-[#8A0000] py-3 px-3">Base</th>
+                  <th className="text-right text-[10px] font-black uppercase tracking-[0.15em] text-[#8A0000] py-3 px-3">London</th>
+                  <th className="text-right text-[10px] font-black uppercase tracking-[0.15em] text-[#8A0000] py-3 px-3">Nairobi</th>
+                  <th className="text-right text-[10px] font-black uppercase tracking-[0.15em] text-[#8A0000] py-3 pl-3">Kampala</th>
+                </tr>
+              </thead>
+              <tbody>
+                {COMPENSATION_TABLE.map((row, i) => (
+                  <tr key={i} className="border-b border-gray-100">
+                    <td className="py-3.5 pr-3 text-[12px] sm:text-[13px] font-semibold text-[#141414]">{row.title}</td>
+                    <td className="py-3.5 px-3 text-[12px] sm:text-[13px] text-right font-bold text-[#141414]">{row.base}</td>
+                    <td className="py-3.5 px-3 text-[12px] sm:text-[13px] text-right text-gray-600">{row.london}</td>
+                    <td className="py-3.5 px-3 text-[12px] sm:text-[13px] text-right text-gray-600">{row.nairobi}</td>
+                    <td className="py-3.5 pl-3 text-[12px] sm:text-[13px] text-right text-gray-600">{row.kampala}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="text-[11px] text-gray-400 mt-4">Location multipliers follow the UN post-adjustment system (Model 3).</p>
+        </div>
+      </section>
+
       {/* ══════════════════════════════════════════
-          4. FIVE DIVISIONS
+          4. FIVE DIVISIONS — Stats row style
           ══════════════════════════════════════════ */}
-      <section id="divisions" className="scroll-mt-[110px] w-full bg-white">
+      <section id="divisions" className="scroll-mt-[110px] w-full bg-gray-50 border-y border-gray-100">
         <div ref={divAnim.ref} className="max-w-[1400px] mx-auto px-5 sm:px-8 lg:px-20 py-16 lg:py-24">
           <div className="mb-6 flex items-center space-x-3">
             <span className="w-8 h-[1px] bg-[#8A0000]"></span>
@@ -608,31 +738,23 @@ export default function CareersPage({ goToPage }: Props) {
             Each Division spans all 50 Colleges and is led by a Division Head. Explore the divisions to find where your expertise fits.
           </p>
 
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-0 border border-gray-200">
             {DIVISIONS.map((div, i) => {
               const Icon = div.icon;
               return (
                 <div
                   key={div.id}
-                  className="grid grid-cols-1 lg:grid-cols-12 gap-0 border border-gray-200 group hover:border-[#8A0000]/30 transition-colors"
+                  className={`p-6 sm:p-7 ${i > 0 ? 'border-t sm:border-t-0 sm:border-l border-gray-200' : ''} group hover:bg-white transition-colors`}
                 >
-                  <div className="lg:col-span-4 p-6 sm:p-8 flex items-start gap-4" style={{ backgroundColor: `${div.color}08` }}>
-                    <div className="w-12 h-12 flex items-center justify-center shrink-0" style={{ backgroundColor: div.color }}>
-                      <Icon size={20} className="text-white" />
-                    </div>
-                    <div>
-                      <span className="text-[10px] font-black tracking-[0.2em] text-gray-400 block mb-1">DIVISION {div.numeral}</span>
-                      <h4 className="text-[17px] sm:text-[20px] font-black text-[#141414] leading-tight">{div.title}</h4>
-                    </div>
+                  <div className="w-10 h-10 flex items-center justify-center mb-4" style={{ backgroundColor: div.color }}>
+                    <Icon size={18} className="text-white" />
                   </div>
-                  <div className="lg:col-span-8 p-6 sm:p-8 border-t lg:border-t-0 lg:border-l border-gray-100">
-                    <div className="flex flex-wrap gap-2">
-                      {div.fields.map((field, j) => (
-                        <span key={j} className="text-[12px] font-semibold px-3 py-1.5 bg-gray-50 border border-gray-100 text-gray-700 group-hover:border-[#8A0000]/20 transition-colors">
-                          {field}
-                        </span>
-                      ))}
-                    </div>
+                  <span className="text-[9px] font-black tracking-[0.25em] text-gray-400 block mb-1">DIVISION {div.numeral}</span>
+                  <h4 className="text-[15px] sm:text-[16px] font-black text-[#141414] leading-tight mb-4">{div.title}</h4>
+                  <div className="space-y-1.5">
+                    {div.fields.map((field, j) => (
+                      <div key={j} className="text-[11px] text-gray-500 leading-[1.4]">{field}</div>
+                    ))}
                   </div>
                 </div>
               );
@@ -640,7 +762,7 @@ export default function CareersPage({ goToPage }: Props) {
           </div>
 
           {/* Link to Centers of Inquiry */}
-          <div className="mt-10 pt-8 border-t border-gray-100">
+          <div className="mt-10 pt-8 border-t border-gray-200">
             <button
               onClick={() => goToPage('centers-of-inquiry')}
               className="flex items-center gap-3 py-3 border-b-2 border-[#141414] text-[#141414] text-[13px] font-bold uppercase tracking-[0.2em] hover:text-[#8A0000] hover:border-[#8A0000] transition-all group"
@@ -656,40 +778,49 @@ export default function CareersPage({ goToPage }: Props) {
       </section>
 
       {/* ══════════════════════════════════════════
-          5. LOCATIONS
+          5. LOCATIONS — Horizontal scroll carousel
           ══════════════════════════════════════════ */}
-      <section id="locations" className="scroll-mt-[110px] w-full bg-gray-50 border-y border-gray-100">
+      <section id="locations" className="scroll-mt-[110px] w-full bg-white">
         <div ref={locAnim.ref} className="max-w-[1400px] mx-auto px-5 sm:px-8 lg:px-20 py-16 lg:py-24">
-          <div className="mb-6 flex items-center space-x-3">
-            <span className="w-8 h-[1px] bg-[#8A0000]"></span>
-            <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#8A0000]">Where You'll Work</span>
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
+            <div>
+              <div className="mb-6 flex items-center space-x-3">
+                <span className="w-8 h-[1px] bg-[#8A0000]"></span>
+                <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#8A0000]">Where You'll Work</span>
+              </div>
+              <h2 className="text-[28px] sm:text-[38px] lg:text-[46px] font-extrabold leading-[1.05] tracking-tighter text-[#141414] mb-3">
+                50 Colleges. 35 Countries.
+              </h2>
+              <p className="text-[17px] text-gray-600 leading-[1.75] max-w-xl">
+                Every College is a physical place — a repurposed convent, a converted warehouse, a former caravansarai.
+              </p>
+            </div>
           </div>
-          <h2 className="text-[28px] sm:text-[38px] lg:text-[46px] font-extrabold leading-[1.05] tracking-tighter text-[#141414] mb-4">
-            50 Colleges. 35 Countries.
-          </h2>
-          <p className="text-[17px] text-gray-600 leading-[1.75] max-w-2xl mb-10">
-            Every College is a physical place — a repurposed convent, a converted warehouse, a former caravansarai. Real places in real cities.
-          </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Tier rows */}
+          <div className="space-y-0 border-t border-gray-200">
             {['Central Node', 'Tier A', 'Tier B', 'Tier C'].map((tier) => {
               const cities = COLLEGE_LOCATIONS.filter(c => c.tier === tier);
               const tierColor = tier === 'Central Node' ? '#8A0000' : tier === 'Tier A' ? '#6B0000' : tier === 'Tier B' ? '#4a0e0e' : '#3d0808';
               return (
-                <div key={tier} className="bg-white border border-gray-200 p-5 sm:p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-8 h-8 flex items-center justify-center" style={{ backgroundColor: tierColor }}>
+                <div key={tier} className="grid grid-cols-1 lg:grid-cols-12 gap-0 border-b border-gray-200 group hover:bg-gray-50/50 transition-colors">
+                  <div className="lg:col-span-3 p-5 sm:p-6 flex items-center gap-4" style={{ backgroundColor: `${tierColor}06` }}>
+                    <div className="w-9 h-9 flex items-center justify-center shrink-0" style={{ backgroundColor: tierColor }}>
                       <Building2 size={14} className="text-white" />
                     </div>
-                    <h4 className="text-[14px] font-black text-[#141414]">{tier}</h4>
-                    <span className="text-[11px] text-gray-400 ml-auto">{cities.length}</span>
+                    <div>
+                      <h4 className="text-[14px] font-black text-[#141414]">{tier}</h4>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">{cities.length} cities</span>
+                    </div>
                   </div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {cities.map((c, j) => (
-                      <span key={j} className="text-[11px] font-medium px-2 py-1 bg-gray-50 border border-gray-100 text-gray-600">
-                        {c.city}
-                      </span>
-                    ))}
+                  <div className="lg:col-span-9 p-5 sm:p-6 border-t lg:border-t-0 lg:border-l border-gray-100">
+                    <div className="flex flex-wrap gap-2">
+                      {cities.map((c, j) => (
+                        <span key={j} className="text-[12px] font-medium px-3 py-1.5 bg-white border border-gray-200 text-gray-700 group-hover:border-[#8A0000]/20 transition-colors">
+                          {c.city}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
               );
@@ -699,28 +830,29 @@ export default function CareersPage({ goToPage }: Props) {
       </section>
 
       {/* ══════════════════════════════════════════
-          6. BENEFITS
+          6. BENEFITS — Horizontal stats row
           ══════════════════════════════════════════ */}
-      <section id="benefits" className="scroll-mt-[110px] w-full bg-white">
+      <section id="benefits" className="scroll-mt-[110px] w-full bg-gray-50 border-y border-gray-100">
         <div ref={benAnim.ref} className="max-w-[1400px] mx-auto px-5 sm:px-8 lg:px-20 py-16 lg:py-24">
-          <div className="relative flex items-center mb-14">
-            <div className="flex-grow border-t border-gray-200"></div>
-            <span className="mx-4 text-[12px] font-bold uppercase tracking-[0.2em] text-gray-400">Benefits</span>
-            <div className="flex-grow border-t border-gray-200"></div>
+          <div className="mb-6 flex items-center space-x-3">
+            <span className="w-8 h-[1px] bg-[#8A0000]"></span>
+            <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#8A0000]">Why Artemis</span>
           </div>
+          <h2 className="text-[28px] sm:text-[38px] lg:text-[46px] font-extrabold leading-[1.05] tracking-tighter text-[#141414] mb-12">
+            What you get
+          </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8">
             {BENEFITS.map((item, i) => {
               const Icon = item.icon;
               return (
-                <div key={i} className="flex items-start gap-4">
-                  <div className="w-11 h-11 flex items-center justify-center bg-[#8A0000]/5 border border-[#8A0000]/10 shrink-0">
-                    <Icon size={18} className="text-[#8A0000]" />
+                <div key={i} className="relative">
+                  <div className="absolute -left-4 top-0 bottom-0 w-0.5 bg-gray-200"></div>
+                  <div className="w-10 h-10 flex items-center justify-center bg-[#8A0000]/5 border border-[#8A0000]/10 mb-4">
+                    <Icon size={16} className="text-[#8A0000]" />
                   </div>
-                  <div>
-                    <h4 className="text-[16px] font-bold text-[#141414] mb-1.5">{item.title}</h4>
-                    <p className="text-[14px] leading-[1.7] text-gray-600">{item.desc}</p>
-                  </div>
+                  <h4 className="text-[15px] font-bold text-[#141414] mb-2">{item.title}</h4>
+                  <p className="text-[13px] leading-[1.7] text-gray-500">{item.desc}</p>
                 </div>
               );
             })}
@@ -729,7 +861,7 @@ export default function CareersPage({ goToPage }: Props) {
       </section>
 
       {/* ══════════════════════════════════════════
-          7. HOW TO APPLY
+          7. HOW TO APPLY — Full-bleed crimson CTA
           ══════════════════════════════════════════ */}
       <section id="apply" className="scroll-mt-[110px] w-full bg-[#8A0000] text-white">
         <div ref={applyAnim.ref} className="max-w-[1400px] mx-auto px-5 sm:px-8 lg:px-20 py-16 lg:py-24">
@@ -757,18 +889,18 @@ export default function CareersPage({ goToPage }: Props) {
               <p className="text-[12px] text-white/40 mt-3">No form. No portal. No algorithm. A human will read it.</p>
             </div>
 
-            {/* Right — 5 items */}
+            {/* Right — Application checklist */}
             <div className="space-y-4">
               {[
-                'Which Division and Center you want to build',
-                'Which College you want to live in',
-                'What you would teach in your first term',
-                'What you would research in your first year',
-                'Why you can survive on a stipend for five years without resentment',
+                { num: '01', text: 'Which Division and Center you want to build' },
+                { num: '02', text: 'Which College you want to live in' },
+                { num: '03', text: 'What you would teach in your first term' },
+                { num: '04', text: 'What you would research in your first year' },
+                { num: '05', text: 'Why you can survive on a stipend for five years without resentment' },
               ].map((item, i) => (
                 <div key={i} className="flex items-start gap-4 bg-white/10 border border-white/15 p-5">
-                  <span className="text-[28px] font-black text-white/20 leading-none shrink-0">{i + 1}</span>
-                  <p className="text-[14px] sm:text-[15px] leading-[1.6] text-white/90 font-medium">{item}</p>
+                  <span className="text-[28px] font-black text-white/20 leading-none shrink-0">{item.num}</span>
+                  <p className="text-[14px] sm:text-[15px] leading-[1.6] text-white/90 font-medium">{item.text}</p>
                 </div>
               ))}
             </div>

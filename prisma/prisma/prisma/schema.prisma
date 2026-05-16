@@ -1,0 +1,128 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  donations Donation[]
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  title     String
+  content   String?
+  published Boolean  @default(false)
+  authorId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─── Fundraising Models ───
+
+model Campaign {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  subtitle    String?
+  description String?
+  goalAmount  Float    // target in GBP
+  raisedAmount Float   @default(0) // total raised in GBP
+  donorCount  Int      @default(0)
+  currency    String   @default("GBP")
+  isActive    Boolean  @default(true)
+  phase       String   @default("public_launch") // inception | quiet | public_launch | consolidation
+  startDate   DateTime?
+  endDate     DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  donations   Donation[]
+  milestones  Milestone[]
+  perks       Perk[]
+  events      FundraisingEvent[]
+}
+
+model Donation {
+  id              String   @id @default(cuid())
+  campaignId      String
+  campaign        Campaign @relation(fields: [campaignId], references: [id])
+  donorEmail      String
+  donorName       String?
+  donorAnonymous  Boolean  @default(false)
+  amount          Float
+  currency        String   @default("GBP")
+  paymentMethod   String   @default("card") // card | bank_transfer | crypto_btc | crypto_eth | paypal | cheque
+  paymentStatus   String   @default("pending") // pending | completed | failed | refunded
+  transactionRef  String?  // external payment reference
+  perkId          String?
+  perk            Perk?    @relation(fields: [perkId], references: [id])
+  isRecurring     Boolean  @default(false)
+  recurringFreq   String?  // monthly | quarterly | annual
+  message         String?  // optional donor message
+  userId          String?
+  user            User?    @relation(fields: [userId], references: [id])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Milestone {
+  id          String   @id @default(cuid())
+  campaignId  String
+  campaign    Campaign @relation(fields: [campaignId], references: [id])
+  title       String
+  description String?
+  targetAmount Float  // amount at which this milestone is reached
+  isReached   Boolean  @default(false)
+  reachedAt   DateTime?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Perk {
+  id              String   @id @default(cuid())
+  campaignId      String
+  campaign        Campaign @relation(fields: [campaignId], references: [id])
+  title           String
+  description     String
+  minAmount       Float    // minimum donation to qualify
+  category        String   @default("recognition") // recognition | naming | experience | physical | digital
+  icon            String?  // lucide icon name
+  isAvailable     Boolean  @default(true)
+  quantityTotal   Int?     // null = unlimited
+  quantityClaimed Int      @default(0)
+  order           Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  donations       Donation[]
+}
+
+model FundraisingEvent {
+  id          String   @id @default(cuid())
+  campaignId  String
+  campaign    Campaign @relation(fields: [campaignId], references: [id])
+  title       String
+  description String?
+  eventType   String   @default("gala") // gala | webinar | site_visit | matching_day | auction | hackathon
+  date        DateTime
+  endDate     DateTime?
+  location    String?
+  isVirtual   Boolean  @default(false)
+  capacity    Int?
+  registered  Int      @default(0)
+  ticketPrice Float?
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

@@ -118,8 +118,9 @@ export default function SearchOverlay({ isOpen, onClose, goToPage }: SearchOverl
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search pages, programs, and resources..."
             className="flex-1 text-[15px] text-[#141414] placeholder-gray-400 outline-none bg-transparent"
+            suppressHydrationWarning
           />
-          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded transition-colors">
+          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded transition-colors" suppressHydrationWarning>
             <X size={18} className="text-gray-400" />
           </button>
         </div>
@@ -134,6 +135,7 @@ export default function SearchOverlay({ isOpen, onClose, goToPage }: SearchOverl
                     key={i}
                     onClick={() => handleSelect(result)}
                     className="w-full flex items-center justify-between px-5 py-3 hover:bg-gray-50 transition-colors text-left group"
+                    suppressHydrationWarning
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <span className="text-[10px] font-bold uppercase tracking-widest text-[#8A0000] bg-[#8A0000]/5 px-2 py-0.5 rounded shrink-0">
@@ -174,6 +176,7 @@ export default function SearchOverlay({ isOpen, onClose, goToPage }: SearchOverl
                     key={label}
                     onClick={() => { goToPage(pageMap[label]); onClose(); }}
                     className="px-3 py-1.5 text-[12px] font-medium text-gray-600 bg-gray-50 hover:bg-[#8A0000]/5 hover:text-[#8A0000] rounded transition-colors"
+                    suppressHydrationWarning
                   >
                     {label}
                   </button>

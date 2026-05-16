@@ -91,6 +91,7 @@ export default function Home({ goToPage }: HomeProps) {
               <button
                 onClick={() => goToPage('research')}
                 className="text-white border-b border-white hover:opacity-80 transition-opacity"
+                suppressHydrationWarning
               >
                 FULL STORY
               </button>
@@ -120,6 +121,7 @@ export default function Home({ goToPage }: HomeProps) {
               <button
                 onClick={() => goToPage('blog')}
                 className="text-[11px] font-bold uppercase tracking-widest text-[#8A0000] border-b border-[#8A0000] hover:text-black hover:border-black transition-colors"
+                suppressHydrationWarning
               >
                 All Stories
               </button>
@@ -336,6 +338,7 @@ export default function Home({ goToPage }: HomeProps) {
                   <button
                     onClick={() => goToPage('collegium-alliance')}
                     className="text-[11px] font-bold uppercase tracking-widest border-b-2 border-[#8A0000] text-[#8A0000] pb-1 hover:text-black hover:border-black transition-colors"
+                    suppressHydrationWarning
                   >
                     Explore the Network →
                   </button>
@@ -397,6 +400,7 @@ export default function Home({ goToPage }: HomeProps) {
                 <button
                   onClick={() => goToPage('collegium-alliance')}
                   className="flex items-center space-x-6 py-3 border-b-2 border-[#8A0000] text-[#8A0000] text-[14px] font-bold uppercase tracking-[0.2em] hover:text-black hover:border-black transition-all group"
+                  suppressHydrationWarning
                 >
                   <span>Build with the Alliance</span>
                   <svg
@@ -448,6 +452,7 @@ export default function Home({ goToPage }: HomeProps) {
               <button
                 onClick={() => goToPage('campus')}
                 className="flex items-center space-x-4 py-3 border-b-2 border-[#8A0000] text-[#8A0000] text-[13px] font-bold uppercase tracking-[0.2em] hover:text-black hover:border-black transition-all group"
+                suppressHydrationWarning
               >
                 <span>Full Events Calendar</span>
                 <svg className="group-hover:translate-x-2 transition-transform" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
@@ -502,6 +507,7 @@ export default function Home({ goToPage }: HomeProps) {
                   key={i}
                   onClick={() => goToPage(event.page)}
                   className="group w-full flex items-start gap-6 py-5 border-b border-gray-200 hover:border-[#8A0000] transition-colors text-left"
+                  suppressHydrationWarning
                 >
                   {/* Date block */}
                   <div className="shrink-0 w-[60px] text-center pt-1">
@@ -540,11 +546,11 @@ export default function Home({ goToPage }: HomeProps) {
           <h4 className="text-[20px] font-bold mb-2">Want more about the Artemis Project?</h4>
           <p className="text-[16px] font-medium leading-relaxed">
             Explore{' '}
-            <button onClick={() => goToPage('blog')} className="underline hover:opacity-80">
+            <button onClick={() => goToPage('blog')} className="underline hover:opacity-80" suppressHydrationWarning>
               the Artemis Journal
             </button>
             , or subscribe to receive{' '}
-            <button onClick={() => goToPage('innovation')} className="underline hover:opacity-80">
+            <button onClick={() => goToPage('innovation')} className="underline hover:opacity-80" suppressHydrationWarning>
               weekly dispatches
             </button>{' '}
             in your inbox.
@@ -553,6 +559,7 @@ export default function Home({ goToPage }: HomeProps) {
         <button
           onClick={() => goToPage('contact-us')}
           className="border border-white px-8 py-2 text-[14px] font-bold hover:bg-white hover:text-[#8A0000] transition-colors uppercase tracking-widest whitespace-nowrap"
+          suppressHydrationWarning
         >
           Subscribe
         </button>

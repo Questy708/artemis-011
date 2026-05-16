@@ -94,6 +94,7 @@ export default function ArtemisChatBot() {
     <button
       onClick={onClick}
       className="flex items-center justify-between w-full px-3.5 py-2 rounded-lg bg-white text-[13px] text-gray-800 hover:bg-gray-50 transition-colors text-left"
+      suppressHydrationWarning
     >
       <span>{text}</span>
       <ArrowUp className="h-3 w-3 text-gray-400 shrink-0 ml-2 rotate-45" />
@@ -119,6 +120,7 @@ export default function ArtemisChatBot() {
         disabled={!input.trim() || isLoading}
         className="flex h-5 w-5 shrink-0 items-center justify-center rounded text-gray-400 transition-colors hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed"
         aria-label="Send"
+        suppressHydrationWarning
       >
         <ArrowUp className="h-3.5 w-3.5" />
       </button>
@@ -137,6 +139,7 @@ export default function ArtemisChatBot() {
           }}
           className="flex h-7 w-7 items-center justify-center rounded text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
           title={chatState === 'expanded' ? 'Side panel' : 'Expanded view'}
+          suppressHydrationWarning
         >
           <PanelRightOpen className="h-4 w-4" />
         </button>
@@ -144,6 +147,7 @@ export default function ArtemisChatBot() {
           onClick={closeToPill}
           className="flex h-7 w-7 items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:bg-gray-50 hover:text-gray-600 transition-colors"
           aria-label="Close"
+          suppressHydrationWarning
         >
           <X className="h-3.5 w-3.5" />
         </button>
@@ -211,6 +215,7 @@ export default function ArtemisChatBot() {
             <button
               onClick={() => setChatState('compact')}
               className="flex items-center gap-2 px-5 py-2.5 rounded-full border border-gray-200 bg-white text-[13px] text-gray-500 hover:bg-gray-50 hover:border-gray-300 transition-all shadow-sm"
+              suppressHydrationWarning
             >
               <ArrowUp className="h-3 w-3" />
               <span>Ask a question</span>

@@ -11,7 +11,8 @@ import {
   ChevronDown, Check, Lock, Bitcoin, Wallet, CreditCard,
   Banknote, Repeat, Rocket, Landmark,
   Heart,
-  Briefcase, FileText, Gift, HandCoins, Phone
+  Briefcase, FileText, Gift, HandCoins, Phone,
+  Scale, MapPin, Eye, CircleDot
 } from 'lucide-react';
 
 interface Props {
@@ -73,6 +74,65 @@ const GIVING_CIRCLES = [
 
 const TIER_COLORS: Record<string, string> = { founders: '#8A0000', guardians: '#6B0000', builders: '#4338ca', fellows: '#0e7490', friends: '#15803d', the99: '#6b7280' };
 const TIER_LABELS: Record<string, string> = { founders: "Founders' Circle", guardians: "Guardians' Circle", builders: "Builders' Circle", fellows: "Fellows' Circle", friends: 'Friends of Artemis', the99: 'The 99' };
+
+const LEGAL_ENTITIES = [
+  {
+    tier: 'Primary',
+    status: 'Incorporated',
+    jurisdiction: 'United States',
+    name: 'Delaware Non-Stock Corporation',
+    classification: '501(c)(3) — Educational & Charitable',
+    keyBenefit: 'Tax-deductible donations in the world\'s largest philanthropy market ($499B in 2024). Every dollar given reduces the donor\'s US tax liability.',
+    structure: [
+      'Non-stock corporation — no shareholders, no owner',
+      'IRS Form 1023 filed for 501(c)(3) determination',
+      'Retroactive deductibility within 27 months of incorporation',
+      'Required: 3+ independent board members, no single controller',
+    ],
+    color: '#8A0000',
+    icon: Landmark,
+  },
+  {
+    tier: 'Secondary',
+    status: 'Pre-Filing',
+    jurisdiction: 'England & Wales',
+    name: 'Charitable Incorporated Organisation',
+    classification: 'Charity Commission — Advancement of Education',
+    keyBenefit: 'Gift Aid turns every £1M into £1.25M through HMRC top-up. UK donors receive full tax relief. Aligns with University of London consortium partnership.',
+    structure: [
+      'CIO or Company Limited by Guarantee',
+      '3+ trustees required with UK registered office',
+      'Gift Aid eligibility — 25% government supplement',
+      'Recognised by Commonwealth jurisdictions worldwide',
+    ],
+    color: '#6B0000',
+    icon: Building2,
+  },
+  {
+    tier: 'Tertiary',
+    status: 'Planned',
+    jurisdiction: 'Switzerland',
+    name: 'Fondation under Swiss Civil Code',
+    classification: 'International Foundation — Geneva Canton',
+    keyBenefit: 'Endowment management in a neutral jurisdiction with minimal tax drag. Signals institutional permanence to European and Gulf donors. Home to WHO, CERN, IOC.',
+    structure: [
+      'Minimum CHF 50,000 initial capital',
+      'Cantonal authority approval required',
+      'No capital gains tax on endowment growth',
+      'Governed by Swiss foundation supervision',
+    ],
+    color: '#4a0e0e',
+    icon: Scale,
+  },
+];
+
+const FISCAL_SPONSORS = ['Rockefeller Philanthropy Advisors', 'NGOsource', 'Global Impact'];
+
+const ACCOUNTABILITY_GUARANTEES = [
+  { title: 'Board Independence', desc: 'No single individual controls more than one-third of board seats. Majority independent directors required.', icon: Users },
+  { title: 'Annual Audit', desc: 'Full independent audit by a Big Four firm. Published annually. No exceptions.', icon: Eye },
+  { title: 'Public Reporting', desc: 'Every dollar received and disbursed is published in an annual impact report, available to every donor and the public.', icon: FileText },
+];
 
 const DONOR_SEGMENTS = [
   { segment: 'Lead Donors', count: '10 gifts', target: '$70M', pct: 70, desc: '70% of the campaign from 10 donors. This is how founding campaigns work.' },
@@ -340,7 +400,7 @@ function PhaseSlider() {
 
 /* ─── Main Component ─── */
 export default function FundraisingCampaign({ goToPage }: Props) {
-  const activeSection = useActiveSection(['case', 'pillars', 'ask', 'phases', 'opportunities', 'circles', 'ways', 'give', 'model']);
+  const activeSection = useActiveSection(['case', 'pillars', 'ask', 'phases', 'opportunities', 'circles', 'ways', 'give', 'model', 'accountability']);
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
   const [customAmount, setCustomAmount] = useState('');
   const [donorName, setDonorName] = useState('');
@@ -368,6 +428,7 @@ export default function FundraisingCampaign({ goToPage }: Props) {
   const modelAnim = useInView(0);
   const beyondAnim = useInView(0);
   const askAnim = useInView(0);
+  const accountabilityAnim = useInView(0);
 
   const effectiveAmount = selectedAmount || parseFloat(customAmount) || 0;
 
@@ -462,6 +523,7 @@ export default function FundraisingCampaign({ goToPage }: Props) {
           { id: 'ways', label: 'Ways to Give' },
           { id: 'give', label: 'Give Now' },
           { id: 'model', label: 'The Math' },
+          { id: 'accountability', label: 'Accountability' },
         ]}
         activeSection={activeSection}
       />
@@ -1635,6 +1697,136 @@ export default function FundraisingCampaign({ goToPage }: Props) {
                   </button>
                 </div>
               </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
+          ACCOUNTABILITY — Legal Architecture
+          ══════════════════════════════════════════ */}
+      <section id="accountability" className="scroll-mt-[110px] py-16 sm:py-24 lg:py-36 bg-gray-50 border-t border-gray-100">
+        <div ref={accountabilityAnim.ref} className="max-w-[1400px] mx-auto w-full px-5 sm:px-8 lg:px-20">
+          {/* Section Header */}
+          <motion.div {...fadeUp(accountabilityAnim.visible)}>
+            <div className="mb-6 flex items-center space-x-3">
+              <span className="w-8 h-[1px] bg-[#8A0000]"></span>
+              <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#8A0000]">Accountability</span>
+            </div>
+            <h2 className="text-[28px] sm:text-[40px] md:text-[52px] lg:text-[56px] font-black leading-[1] tracking-tighter text-[#141414] mb-4">
+              Built to endure.<br />Structured to last.
+            </h2>
+            <p className="text-[15px] sm:text-[17px] text-gray-600 max-w-2xl leading-relaxed mb-12 sm:mb-16">
+              Here is the legal architecture behind the founding.
+            </p>
+          </motion.div>
+
+          {/* Three legal entity cards */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 border border-gray-200 mb-12 sm:mb-16">
+            {LEGAL_ENTITIES.map((entity, i) => {
+              const Icon = entity.icon;
+              return (
+                <motion.div
+                  key={i}
+                  {...fadeUp(accountabilityAnim.visible, i * 0.1)}
+                  className={`bg-white ${i > 0 ? 'border-t lg:border-t-0 lg:border-l border-gray-200' : ''}`}
+                >
+                  <div className="p-6 sm:p-8">
+                    {/* Tier badge + status */}
+                    <div className="flex items-center justify-between mb-5">
+                      <span className="text-[9px] font-black uppercase tracking-[0.25em] px-2.5 py-1 text-white" style={{ backgroundColor: entity.color }}>{entity.tier}</span>
+                      <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">{entity.status}</span>
+                    </div>
+
+                    {/* Jurisdiction + entity type */}
+                    <div className="flex items-start gap-3 mb-4">
+                      <div className="w-10 h-10 flex items-center justify-center shrink-0" style={{ backgroundColor: entity.color }}>
+                        <Icon size={18} className="text-white" />
+                      </div>
+                      <div>
+                        <h4 className="text-[15px] sm:text-[17px] font-black text-[#141414] leading-tight">{entity.jurisdiction}</h4>
+                        <p className="text-[12px] text-gray-500 mt-0.5">{entity.name}</p>
+                      </div>
+                    </div>
+
+                    {/* Classification */}
+                    <div className="bg-gray-50 border border-gray-100 p-3 mb-5">
+                      <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#8A0000] block mb-1">Classification</span>
+                      <p className="text-[12px] sm:text-[13px] font-semibold text-[#141414]">{entity.classification}</p>
+                    </div>
+
+                    {/* Key Benefit */}
+                    <div className="mb-5">
+                      <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-gray-400 block mb-2">Key Benefit</span>
+                      <p className="text-[13px] sm:text-[14px] text-gray-600 leading-[1.7]">{entity.keyBenefit}</p>
+                    </div>
+
+                    {/* Structure */}
+                    <div className="border-t border-gray-100 pt-4">
+                      <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-gray-400 block mb-3">Structure</span>
+                      <ul className="space-y-2">
+                        {entity.structure.map((item, j) => (
+                          <li key={j} className="flex items-start gap-2.5">
+                            <Check size={12} className="mt-1 shrink-0" style={{ color: entity.color }} />
+                            <span className="text-[12px] sm:text-[13px] text-gray-600 leading-[1.5]">{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          {/* Interim Fiscal Sponsorship */}
+          <motion.div {...fadeUp(accountabilityAnim.visible, 0.3)} className="bg-white border border-gray-200 p-6 sm:p-8 lg:p-10 mb-12 sm:mb-16">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+              <div>
+                <span className="text-[9px] font-black uppercase tracking-[0.25em] px-2.5 py-1 bg-[#8A0000]/10 text-[#8A0000] inline-block mb-4">Interim Fiscal Sponsorship</span>
+                <h3 className="text-[20px] sm:text-[24px] font-black text-[#141414] leading-tight mb-4">
+                  Fully tax-deductible from Day 1
+                </h3>
+                <p className="text-[14px] sm:text-[15px] text-gray-600 leading-[1.75]">
+                  From Day 1 through 501(c)(3) approval, a recognised fiscal sponsor receives and disburses all donations on Artemis\'s behalf. This means every gift is fully tax-deductible immediately — no waiting for the IRS. Once the determination letter is issued, all prior donations are treated as if they were made directly to Artemis.
+                </p>
+              </div>
+              <div className="flex flex-col justify-center">
+                <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-gray-400 block mb-4">Covered by</span>
+                <div className="space-y-0">
+                  {FISCAL_SPONSORS.map((sponsor, i) => (
+                    <div key={i} className="flex items-center gap-3 py-3 border-b border-gray-100 last:border-b-0">
+                      <div className="w-8 h-8 flex items-center justify-center bg-[#8A0000]/5 shrink-0">
+                        <Shield size={14} className="text-[#8A0000]" />
+                      </div>
+                      <span className="text-[14px] sm:text-[15px] font-bold text-[#141414]">{sponsor}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Three accountability guarantees */}
+          <motion.div {...fadeUp(accountabilityAnim.visible, 0.4)}>
+            <div className="relative flex items-center mb-10 sm:mb-14">
+              <div className="flex-grow border-t border-gray-200"></div>
+              <span className="mx-4 text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400">Guarantees</span>
+              <div className="flex-grow border-t border-gray-200"></div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border border-gray-200">
+              {ACCOUNTABILITY_GUARANTEES.map((item, i) => {
+                const Icon = item.icon;
+                return (
+                  <div key={i} className={`p-6 sm:p-8 bg-white ${i > 0 ? 'border-t md:border-t-0 md:border-l border-gray-200' : ''}`}>
+                    <div className="w-10 h-10 flex items-center justify-center bg-[#8A0000]/5 border border-[#8A0000]/10 mb-4">
+                      <Icon size={18} className="text-[#8A0000]" />
+                    </div>
+                    <h4 className="text-[16px] sm:text-[18px] font-black text-[#141414] mb-2">{item.title}</h4>
+                    <p className="text-[13px] sm:text-[14px] text-gray-600 leading-[1.7]">{item.desc}</p>
+                  </div>
+                );
+              })}
             </div>
           </motion.div>
         </div>
